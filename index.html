@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -33,6 +34,15 @@ body{
  background:#fff;
  color:var(--teks);
  overflow-x:hidden
+}
+
+html{
+ scroll-behavior:smooth;
+}
+
+#rute-section,
+#footer-section{
+ scroll-margin-top:80px;
 }
 
 /* ==================== CSS PROMO INLINE ==================== */
@@ -78,6 +88,12 @@ body{
  gap:10px;
  flex-wrap:wrap
 }
+.promo-inline-info{
+ color:rgba(255,255,255,0.75);
+ font-size:0.82rem;
+ font-weight:600;
+ white-space:nowrap;
+}
 .promo-inline-code{
  background:var(--kuning);
  color:var(--hijau);
@@ -87,22 +103,6 @@ body{
  border-radius:50px;
  letter-spacing:0.05em;
  white-space:nowrap
-}
-.promo-inline-btn{
- background:white;
- color:var(--hijau);
- border:none;
- padding:0.45rem 1.1rem;
- border-radius:7px;
- font-size:0.8rem;
- font-weight:700;
- cursor:pointer;
- font-family:inherit;
- transition:opacity 0.2s;
- white-space:nowrap
-}
-.promo-inline-btn:hover{
- opacity:0.85
 }
 @media(max-width:540px){
  .promo-inline{
@@ -303,9 +303,25 @@ nav{
  border-radius:2px
 }
 
+/* ==================== CSS HERO AREA DENGAN BACKGROUND FULL ==================== */
+.hero-area{
+ background:
+  linear-gradient(
+   90deg,
+   rgba(15,36,25,0.72) 0%,
+   rgba(27,67,50,0.58) 38%,
+   rgba(27,67,50,0.32) 72%,
+   rgba(27,67,50,0.16) 100%
+  ),
+  url("image/nusabus.png") center center/cover no-repeat;
+ padding-bottom:3rem;
+ position:relative;
+ overflow:hidden;
+}
+
 /* ==================== CSS HERO / BANNER UTAMA ==================== */
 .hero{
- background: linear-gradient(90deg, rgba(15,36,25,0.98) 0%, rgba(27,67,50,0.92) 46%, rgba(27,67,50,0.62) 100%), url("image/nusabus.png") center right/cover no-repeat;
+ background:transparent;
  padding:3.5rem 2rem 6rem;
  position:relative;
  overflow:hidden;
@@ -313,7 +329,7 @@ nav{
 .hero-dots{
  position:absolute;
  inset:0;
- opacity:0.05;
+ opacity:0.02;
  background-image:radial-gradient(circle,white 1.5px,transparent 1.5px);
  background-size:30px 30px
 }
@@ -443,12 +459,51 @@ nav{
  border-color:var(--hijau);
  transform:rotate(180deg)
 }
+
+/* ==================== CSS EXTRA ROW (Tanggal & Penumpang) ==================== */
 .extra-row{
  display:grid;
  grid-template-columns:1fr 1fr;
  gap:10px;
- margin-bottom:1rem
+ margin-bottom:1rem;
+ transition: grid-template-columns 0.25s ease;
 }
+.extra-row.tiga-kolom{
+ grid-template-columns:1fr 1fr 1fr;
+}
+
+/* Layout awal Sekali Jalan: Tanggal Pergi dan Penumpang sejajar */
+.extra-row:not(.tiga-kolom){
+ grid-template-columns:1fr 1fr;
+}
+
+.extra-row:not(.tiga-kolom) #tgl-kembali-wrap{
+ display:none !important;
+}
+
+.extra-row:not(.tiga-kolom) .field-pergi{
+ grid-column:1;
+}
+
+.extra-row:not(.tiga-kolom) .field-penumpang{
+ grid-column:2;
+}
+
+/* Animasi munculnya field tanggal kembali */
+.field-kembali{
+ display:none;
+ opacity:0;
+ transform:translateY(-6px);
+ transition:opacity 0.25s ease, transform 0.25s ease;
+}
+.field-kembali.visible{
+ display:flex;
+ flex-direction:column;
+ gap:4px;
+ opacity:1;
+ transform:translateY(0);
+}
+
 .field{
  display:flex;
  flex-direction:column;
@@ -479,6 +534,24 @@ nav{
  border-color:var(--hijau-terang);
  box-shadow:0 0 0 3px rgba(82,183,136,0.12)
 }
+
+/* Badge "Pulang Pergi" di label tanggal kembali */
+.label-badge{
+ display:inline-flex;
+ align-items:center;
+ gap:4px;
+ font-size:0.62rem;
+ font-weight:700;
+ background:rgba(82,183,136,0.12);
+ color:var(--hijau-terang);
+ padding:0.1rem 0.45rem;
+ border-radius:50px;
+ margin-left:5px;
+ letter-spacing:0.04em;
+ vertical-align:middle;
+ text-transform:uppercase
+}
+
 .search-footer{
  display:flex;
  align-items:center;
@@ -516,7 +589,7 @@ nav{
 .stats-bar{
  background:var(--abu);
  padding:1.6rem 2rem;
- margin-top:3rem
+ margin-top:3rem;
 }
 .stats-inner{
  max-width:760px;
@@ -992,6 +1065,245 @@ nav{
  background:var(--hijau-mid);
  transform:translateY(-2px)
 }
+
+
+/* ==================== CSS POPUP DETAIL ARTIKEL ==================== */
+.artikel-card{
+ cursor:pointer;
+}
+.artikel-modal{
+ position:fixed;
+ inset:0;
+ background:rgba(15,36,25,0.72);
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:1.5rem;
+ z-index:999;
+}
+.artikel-modal.active{
+ display:flex;
+}
+.artikel-modal-box{
+ background:white;
+ width:100%;
+ max-width:680px;
+ border-radius:18px;
+ padding:2rem;
+ position:relative;
+ box-shadow:0 20px 60px rgba(0,0,0,0.25);
+ animation:modalMasuk 0.25s ease;
+}
+@keyframes modalMasuk{
+ from{
+  opacity:0;
+  transform:translateY(18px) scale(0.96);
+ }
+ to{
+  opacity:1;
+  transform:translateY(0) scale(1);
+ }
+}
+.artikel-modal-close{
+ position:absolute;
+ top:1rem;
+ right:1rem;
+ width:36px;
+ height:36px;
+ border:none;
+ border-radius:50%;
+ background:#F0FAF5;
+ color:var(--hijau);
+ font-size:1.2rem;
+ cursor:pointer;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ transition:all 0.2s;
+}
+.artikel-modal-close:hover{
+ background:var(--hijau);
+ color:white;
+}
+.artikel-modal-label{
+ font-size:0.72rem;
+ font-weight:800;
+ letter-spacing:0.09em;
+ text-transform:uppercase;
+ color:var(--hijau-terang);
+ margin-bottom:0.6rem;
+}
+.artikel-modal-title{
+ font-size:1.7rem;
+ font-weight:800;
+ color:var(--teks);
+ line-height:1.3;
+ margin-bottom:0.7rem;
+ padding-right:2rem;
+}
+.artikel-modal-date{
+ display:flex;
+ align-items:center;
+ gap:6px;
+ color:var(--teks-muted);
+ font-size:0.85rem;
+ margin-bottom:1.4rem;
+ padding-bottom:1rem;
+ border-bottom:1px solid #EEF3EF;
+}
+.artikel-modal-content{
+ color:var(--teks-mid);
+ font-size:0.95rem;
+ line-height:1.85;
+}
+.artikel-modal-content p{
+ margin-bottom:1rem;
+}
+@media(max-width:540px){
+ .artikel-modal-box{
+  padding:1.5rem;
+ }
+ .artikel-modal-title{
+  font-size:1.35rem;
+ }
+}
+
+
+/* ==================== CSS POPUP SEMUA ARTIKEL ==================== */
+.semua-artikel-modal{
+ position:fixed;
+ inset:0;
+ background:rgba(15,36,25,0.72);
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:1.5rem;
+ z-index:999;
+}
+.semua-artikel-modal.active{
+ display:flex;
+}
+.semua-artikel-box{
+ background:white;
+ width:100%;
+ max-width:760px;
+ max-height:85vh;
+ overflow-y:auto;
+ border-radius:18px;
+ padding:2rem;
+ position:relative;
+ box-shadow:0 20px 60px rgba(0,0,0,0.25);
+ animation:modalMasuk 0.25s ease;
+}
+.semua-artikel-box::-webkit-scrollbar{
+ width:8px;
+}
+.semua-artikel-box::-webkit-scrollbar-thumb{
+ background:#B7C9BD;
+ border-radius:20px;
+}
+.semua-artikel-box::-webkit-scrollbar-track{
+ background:#F4F6F4;
+ border-radius:20px;
+}
+.semua-artikel-close{
+ position:absolute;
+ top:1rem;
+ right:1rem;
+ width:36px;
+ height:36px;
+ border:none;
+ border-radius:50%;
+ background:#F0FAF5;
+ color:var(--hijau);
+ font-size:1.2rem;
+ cursor:pointer;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ transition:all 0.2s;
+}
+.semua-artikel-close:hover{
+ background:var(--hijau);
+ color:white;
+}
+.semua-artikel-label{
+ font-size:0.72rem;
+ font-weight:800;
+ letter-spacing:0.09em;
+ text-transform:uppercase;
+ color:var(--hijau-terang);
+ margin-bottom:0.5rem;
+}
+.semua-artikel-title{
+ font-size:1.7rem;
+ font-weight:800;
+ color:var(--teks);
+ margin-bottom:0.4rem;
+ padding-right:2rem;
+}
+.semua-artikel-subtitle{
+ color:var(--teks-muted);
+ font-size:0.9rem;
+ line-height:1.7;
+ margin-bottom:1.5rem;
+}
+.semua-artikel-list{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:1rem;
+}
+.semua-artikel-item{
+ background:#F8FBF9;
+ border:1.5px solid #E5EEE8;
+ border-radius:15px;
+ padding:1rem;
+ display:flex;
+ gap:0.85rem;
+ align-items:flex-start;
+ cursor:pointer;
+ transition:all 0.2s;
+}
+.semua-artikel-item:hover{
+ background:#F0FAF5;
+ border-color:var(--hijau-terang);
+ transform:translateY(-2px);
+}
+.semua-artikel-icon{
+ width:42px;
+ height:42px;
+ border-radius:12px;
+ background:#F0FAF5;
+ color:var(--hijau);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:1.25rem;
+ flex-shrink:0;
+}
+.semua-artikel-item h4{
+ font-size:0.95rem;
+ font-weight:800;
+ color:var(--teks);
+ line-height:1.45;
+ margin-bottom:0.35rem;
+}
+.semua-artikel-item p{
+ color:var(--teks-muted);
+ font-size:0.78rem;
+}
+@media(max-width:640px){
+ .semua-artikel-list{
+  grid-template-columns:1fr;
+ }
+ .semua-artikel-box{
+  padding:1.5rem;
+ }
+ .semua-artikel-title{
+  font-size:1.35rem;
+ }
+}
+
 @media(max-width:900px){
  .artikel-grid{
  grid-template-columns:1fr 1fr
@@ -1006,6 +1318,141 @@ nav{
  }
  .artikel-grid{
  grid-template-columns:1fr
+ }
+}
+
+
+/* ==================== CSS POPUP POOL / OUTLET KOTA ==================== */
+.pool-modal{
+ position:fixed;
+ inset:0;
+ background:rgba(15,36,25,0.72);
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:1.5rem;
+ z-index:999;
+}
+.pool-modal.active{
+ display:flex;
+}
+.pool-modal-box{
+ background:white;
+ width:100%;
+ max-width:620px;
+ max-height:88vh;
+ overflow-y:auto;
+ border-radius:18px;
+ padding:2rem;
+ position:relative;
+ box-shadow:0 20px 60px rgba(0,0,0,0.25);
+ animation:modalMasuk 0.25s ease;
+}
+.pool-modal-box::-webkit-scrollbar{
+ width:8px
+}
+.pool-modal-box::-webkit-scrollbar-thumb{
+ background:#B7C9BD;
+ border-radius:20px
+}
+.pool-modal-box::-webkit-scrollbar-track{
+ background:#F4F6F4;
+ border-radius:20px
+}
+.pool-modal-close{
+ position:absolute;
+ top:1rem;
+ right:1rem;
+ width:36px;
+ height:36px;
+ border:none;
+ border-radius:50%;
+ background:#F0FAF5;
+ color:var(--hijau);
+ font-size:1.2rem;
+ cursor:pointer;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ transition:all 0.2s;
+}
+.pool-modal-close:hover{
+ background:var(--hijau);
+ color:white;
+}
+.pool-modal-label{
+ font-size:0.72rem;
+ font-weight:800;
+ letter-spacing:0.09em;
+ text-transform:uppercase;
+ color:var(--hijau-terang);
+ margin-bottom:0.5rem;
+}
+.pool-modal-title{
+ font-size:1.7rem;
+ font-weight:800;
+ color:var(--teks);
+ margin-bottom:0.4rem;
+ padding-right:2.2rem;
+}
+.pool-modal-subtitle{
+ color:var(--teks-muted);
+ font-size:0.9rem;
+ margin-bottom:1.4rem;
+}
+.pool-list{
+ display:flex;
+ flex-direction:column;
+ gap:0.8rem;
+}
+.pool-item{
+ background:#F8FBF9;
+ border:1.5px solid #E5EEE8;
+ border-radius:14px;
+ padding:1rem;
+ display:flex;
+ gap:0.8rem;
+ align-items:flex-start;
+ transition:all 0.2s ease;
+}
+.pool-item:hover{
+ border-color:var(--hijau-terang);
+ transform:translateY(-2px);
+ box-shadow:0 8px 24px rgba(27,67,50,0.08);
+}
+.pool-item i{
+ color:var(--hijau-mid);
+ font-size:1.25rem;
+ margin-top:2px;
+ flex-shrink:0;
+}
+.pool-item h4{
+ font-size:0.95rem;
+ font-weight:800;
+ color:var(--teks);
+ margin-bottom:0.25rem;
+}
+.pool-item p{
+ color:var(--teks-muted);
+ font-size:0.82rem;
+ line-height:1.5;
+}
+.pool-item span{
+ display:inline-flex;
+ margin-top:0.45rem;
+ font-size:0.74rem;
+ font-weight:700;
+ color:var(--hijau);
+ background:#F0FAF5;
+ padding:0.22rem 0.55rem;
+ border-radius:50px;
+}
+@media(max-width:540px){
+ .pool-modal-box{
+  padding:1.5rem;
+ }
+ .pool-modal-title{
+  font-size:1.35rem;
  }
 }
 
@@ -1268,6 +1715,357 @@ footer{
  }
 }
 
+
+/* ==================== CSS POPUP INFO FOOTER ==================== */
+.footer-info-modal{
+ position:fixed;
+ inset:0;
+ background:rgba(15,36,25,0.72);
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:1.5rem;
+ z-index:999;
+}
+
+.footer-info-modal.active{
+ display:flex;
+}
+
+.footer-info-box{
+ background:white;
+ width:100%;
+ max-width:680px;
+ max-height:86vh;
+ overflow-y:auto;
+ border-radius:18px;
+ padding:2rem;
+ position:relative;
+ box-shadow:0 20px 60px rgba(0,0,0,0.25);
+ animation:modalMasuk 0.25s ease;
+}
+
+.footer-info-close{
+ position:absolute;
+ top:1rem;
+ right:1rem;
+ width:36px;
+ height:36px;
+ border:none;
+ border-radius:50%;
+ background:#F0FAF5;
+ color:var(--hijau);
+ font-size:1.2rem;
+ cursor:pointer;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ transition:all 0.2s;
+}
+
+.footer-info-close:hover{
+ background:var(--hijau);
+ color:white;
+}
+
+.footer-info-label{
+ font-size:0.72rem;
+ font-weight:800;
+ letter-spacing:0.09em;
+ text-transform:uppercase;
+ color:var(--hijau-terang);
+ margin-bottom:0.5rem;
+}
+
+.footer-info-title{
+ font-size:1.7rem;
+ font-weight:800;
+ color:var(--teks);
+ line-height:1.3;
+ margin-bottom:0.6rem;
+ padding-right:2rem;
+}
+
+.footer-info-subtitle{
+ color:var(--teks-muted);
+ font-size:0.92rem;
+ line-height:1.7;
+ margin-bottom:1.2rem;
+}
+
+.footer-info-content{
+ display:flex;
+ flex-direction:column;
+ gap:0.8rem;
+}
+
+.footer-info-item{
+ background:#F8FBF9;
+ border:1.5px solid #E5EEE8;
+ border-radius:14px;
+ padding:1rem;
+ display:flex;
+ gap:0.8rem;
+ align-items:flex-start;
+}
+
+.footer-info-item i{
+ color:var(--hijau-mid);
+ font-size:1.25rem;
+ margin-top:2px;
+ flex-shrink:0;
+}
+
+.footer-info-item h4{
+ font-size:0.95rem;
+ font-weight:800;
+ color:var(--teks);
+ margin-bottom:0.25rem;
+}
+
+.footer-info-item p{
+ color:var(--teks-muted);
+ font-size:0.84rem;
+ line-height:1.6;
+}
+
+.footer-info-action{
+ margin-top:1.2rem;
+ display:flex;
+ gap:0.75rem;
+ flex-wrap:wrap;
+}
+
+.footer-info-action button,
+.footer-info-action a{
+ background:var(--hijau);
+ color:white;
+ border:none;
+ padding:0.72rem 1.2rem;
+ border-radius:9px;
+ font-family:inherit;
+ font-size:0.86rem;
+ font-weight:700;
+ cursor:pointer;
+ text-decoration:none;
+ display:inline-flex;
+ align-items:center;
+ gap:7px;
+ transition:background 0.2s;
+}
+
+.footer-info-action button:hover,
+.footer-info-action a:hover{
+ background:var(--hijau-mid);
+}
+
+@media(max-width:540px){
+ .footer-info-box{
+  padding:1.5rem;
+ }
+
+ .footer-info-title{
+  font-size:1.35rem;
+ }
+}
+
+
+
+/* ==================== CSS POPUP PAKET ==================== */
+.paket-modal{
+ position:fixed;
+ inset:0;
+ background:rgba(15,36,25,0.72);
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:1.5rem;
+ z-index:999;
+}
+
+.paket-modal.active{
+ display:flex;
+}
+
+.paket-modal-box{
+ background:white;
+ width:100%;
+ max-width:620px;
+ max-height:88vh;
+ overflow-y:auto;
+ border-radius:18px;
+ padding:2rem;
+ position:relative;
+ box-shadow:0 20px 60px rgba(0,0,0,0.25);
+ animation:modalMasuk 0.25s ease;
+}
+
+.paket-modal-close{
+ position:absolute;
+ top:1rem;
+ right:1rem;
+ width:36px;
+ height:36px;
+ border:none;
+ border-radius:50%;
+ background:#F0FAF5;
+ color:var(--hijau);
+ font-size:1.2rem;
+ cursor:pointer;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ transition:all 0.2s;
+}
+
+.paket-modal-close:hover{
+ background:var(--hijau);
+ color:white;
+}
+
+.paket-modal-label{
+ font-size:0.72rem;
+ font-weight:800;
+ letter-spacing:0.09em;
+ text-transform:uppercase;
+ color:var(--hijau-terang);
+ margin-bottom:0.5rem;
+}
+
+.paket-modal-title{
+ font-size:1.7rem;
+ font-weight:800;
+ color:var(--teks);
+ margin-bottom:0.4rem;
+ padding-right:2.5rem;
+}
+
+.paket-modal-subtitle{
+ color:var(--teks-muted);
+ font-size:0.9rem;
+ line-height:1.7;
+ margin-bottom:1.5rem;
+}
+
+.paket-form{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:1rem;
+}
+
+.paket-form .field-full{
+ grid-column:1 / -1;
+}
+
+.btn-paket{
+ background:var(--hijau);
+ color:white;
+ border:none;
+ padding:0.75rem 1.4rem;
+ border-radius:9px;
+ font-family:inherit;
+ font-size:0.9rem;
+ font-weight:700;
+ cursor:pointer;
+ transition:background 0.2s;
+ width:100%;
+}
+
+.btn-paket:hover{
+ background:var(--hijau-mid);
+}
+
+.paket-result{
+ margin-top:1.3rem;
+ background:#F8FBF9;
+ border:1.5px solid #E5EEE8;
+ border-radius:14px;
+ padding:1rem;
+ display:none;
+}
+
+.paket-result.active{
+ display:block;
+}
+
+.paket-result h4{
+ font-size:1rem;
+ font-weight:800;
+ color:var(--teks);
+ margin-bottom:0.6rem;
+}
+
+.paket-result-row{
+ display:flex;
+ justify-content:space-between;
+ gap:1rem;
+ padding:0.55rem 0;
+ border-bottom:1px solid #E5EEE8;
+ font-size:0.87rem;
+ color:var(--teks-mid);
+}
+
+.paket-result-row:last-child{
+ border-bottom:none;
+}
+
+.paket-result-row strong{
+ color:var(--hijau);
+ text-align:right;
+}
+
+.tracking-step{
+ display:flex;
+ gap:0.8rem;
+ padding:0.8rem 0;
+ border-bottom:1px solid #E5EEE8;
+}
+
+.tracking-step:last-child{
+ border-bottom:none;
+}
+
+.tracking-dot{
+ width:28px;
+ height:28px;
+ border-radius:50%;
+ background:var(--hijau);
+ color:white;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:0.8rem;
+ font-weight:800;
+ flex-shrink:0;
+}
+
+.tracking-info h4{
+ font-size:0.92rem;
+ font-weight:800;
+ color:var(--teks);
+ margin-bottom:0.25rem;
+}
+
+.tracking-info p{
+ font-size:0.82rem;
+ color:var(--teks-muted);
+ line-height:1.5;
+}
+
+@media(max-width:560px){
+ .paket-form{
+  grid-template-columns:1fr;
+ }
+
+ .paket-modal-box{
+  padding:1.5rem;
+ }
+
+ .paket-modal-title{
+  font-size:1.35rem;
+ }
+}
+
 /* ==================== RESPONSIVE / TAMPILAN MOBILE ==================== */
 @media(max-width:900px){
  .outlet-layout{
@@ -1285,11 +2083,17 @@ footer{
  }
 }
 @media(max-width:700px){
- .hero{
- background: linear-gradient(rgba(15,36,25,0.96), rgba(27,67,50,0.91)), url("image/nusabus.png") center/cover no-repeat;
+ .hero-area{
+  background:
+   linear-gradient(
+    rgba(15,36,25,0.70),
+    rgba(27,67,50,0.48)
+   ),
+   url("image/nusabus.png") center/cover no-repeat;
  }
-
- /* Navbar Mobile Melar ke bawah */
+ .hero{
+  background:transparent;
+ }
  nav{
  flex-wrap: wrap;
  height: auto;
@@ -1304,8 +2108,6 @@ footer{
  .hamburger{
  display: flex;
  }
-
- /* Saat Menu HP Dibuka */
  nav.menu-open .nav-menu{
  display: flex;
  flex-direction: column;
@@ -1324,8 +2126,6 @@ footer{
  padding-bottom: 0.5rem;
  align-items: flex-start;
  }
-
- /* Dropdown Mobile Setup */
  .nav-menu li .dropdown{
  position: static;
  transform: none;
@@ -1350,6 +2150,16 @@ footer{
  }
  .footer-grid{
  grid-template-columns:1fr 1fr
+ }
+}
+@media(max-width:600px){
+ /* Saat 3 kolom di mobile: paksa 2 baris */
+ .extra-row.tiga-kolom{
+ grid-template-columns:1fr 1fr !important;
+ }
+
+ .extra-row:not(.tiga-kolom){
+ grid-template-columns:1fr 1fr !important;
  }
 }
 @media(max-width:540px){
@@ -1383,8 +2193,9 @@ footer{
  .swap-center{
  display:none
  }
- .extra-row{
- grid-template-columns:1fr
+ .extra-row,
+ .extra-row.tiga-kolom{
+ grid-template-columns:1fr !important
  }
  .search-footer{
  flex-direction:column
@@ -1410,6 +2221,333 @@ footer{
  padding:2.6rem 1rem
  }
 }
+
+
+/* ==================== CSS POPUP CEK TIKET & LOGIN ==================== */
+.auth-modal{
+ position:fixed;
+ inset:0;
+ background:rgba(15,36,25,0.72);
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:1.5rem;
+ z-index:999;
+}
+
+.auth-modal.active{
+ display:flex;
+}
+
+.auth-box{
+ background:white;
+ width:100%;
+ max-width:480px;
+ border-radius:18px;
+ padding:2rem;
+ position:relative;
+ box-shadow:0 20px 60px rgba(0,0,0,0.25);
+ animation:modalMasuk 0.25s ease;
+}
+
+.auth-close{
+ position:absolute;
+ top:1rem;
+ right:1rem;
+ width:36px;
+ height:36px;
+ border:none;
+ border-radius:50%;
+ background:#F0FAF5;
+ color:var(--hijau);
+ font-size:1.2rem;
+ cursor:pointer;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ transition:all 0.2s;
+}
+
+.auth-close:hover{
+ background:var(--hijau);
+ color:white;
+}
+
+.auth-label{
+ font-size:0.72rem;
+ font-weight:800;
+ letter-spacing:0.09em;
+ text-transform:uppercase;
+ color:var(--hijau-terang);
+ margin-bottom:0.5rem;
+}
+
+.auth-title{
+ font-size:1.65rem;
+ font-weight:800;
+ color:var(--teks);
+ margin-bottom:0.45rem;
+}
+
+.auth-subtitle{
+ color:var(--teks-muted);
+ font-size:0.9rem;
+ line-height:1.7;
+ margin-bottom:1.4rem;
+}
+
+.auth-form{
+ display:flex;
+ flex-direction:column;
+ gap:1rem;
+}
+
+.auth-btn{
+ background:var(--hijau);
+ color:white;
+ border:none;
+ padding:0.78rem 1.4rem;
+ border-radius:9px;
+ font-family:inherit;
+ font-size:0.9rem;
+ font-weight:700;
+ cursor:pointer;
+ transition:background 0.2s;
+}
+
+.auth-btn:hover{
+ background:var(--hijau-mid);
+}
+
+.auth-result{
+ margin-top:1.2rem;
+ background:#F8FBF9;
+ border:1.5px solid #E5EEE8;
+ border-radius:14px;
+ padding:1rem;
+ display:none;
+}
+
+.auth-result.active{
+ display:block;
+}
+
+.auth-result h4{
+ font-size:1rem;
+ font-weight:800;
+ color:var(--teks);
+ margin-bottom:0.55rem;
+}
+
+.auth-result-row{
+ display:flex;
+ justify-content:space-between;
+ gap:1rem;
+ padding:0.5rem 0;
+ border-bottom:1px solid #E5EEE8;
+ font-size:0.86rem;
+ color:var(--teks-mid);
+}
+
+.auth-result-row:last-child{
+ border-bottom:none;
+}
+
+.auth-result-row strong{
+ color:var(--hijau);
+ text-align:right;
+}
+
+.auth-small{
+ text-align:center;
+ color:var(--teks-muted);
+ font-size:0.8rem;
+ margin-top:0.9rem;
+}
+
+.auth-small a{
+ color:var(--hijau);
+ font-weight:700;
+ text-decoration:none;
+}
+
+@media(max-width:540px){
+ .auth-box{
+  padding:1.5rem;
+ }
+
+ .auth-title{
+  font-size:1.35rem;
+ }
+}
+
+
+/* ==================== CSS POPUP HASIL JADWAL ==================== */
+.jadwal-modal{
+ position:fixed;
+ inset:0;
+ background:rgba(15,36,25,0.72);
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:1.5rem;
+ z-index:999;
+}
+
+.jadwal-modal.active{
+ display:flex;
+}
+
+.jadwal-box{
+ background:white;
+ width:100%;
+ max-width:760px;
+ max-height:85vh;
+ overflow-y:auto;
+ border-radius:18px;
+ padding:2rem;
+ position:relative;
+ box-shadow:0 20px 60px rgba(0,0,0,0.25);
+ animation:modalMasuk 0.25s ease;
+}
+
+.jadwal-close{
+ position:absolute;
+ top:1rem;
+ right:1rem;
+ width:36px;
+ height:36px;
+ border:none;
+ border-radius:50%;
+ background:#F0FAF5;
+ color:var(--hijau);
+ font-size:1.2rem;
+ cursor:pointer;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ transition:all 0.2s;
+}
+
+.jadwal-close:hover{
+ background:var(--hijau);
+ color:white;
+}
+
+.jadwal-label{
+ font-size:0.72rem;
+ font-weight:800;
+ letter-spacing:0.09em;
+ text-transform:uppercase;
+ color:var(--hijau-terang);
+ margin-bottom:0.5rem;
+}
+
+.jadwal-title{
+ font-size:1.7rem;
+ font-weight:800;
+ color:var(--teks);
+ margin-bottom:0.4rem;
+ padding-right:2rem;
+}
+
+.jadwal-subtitle{
+ color:var(--teks-muted);
+ font-size:0.9rem;
+ line-height:1.7;
+ margin-bottom:1.4rem;
+}
+
+.jadwal-list{
+ display:flex;
+ flex-direction:column;
+ gap:1rem;
+}
+
+.jadwal-item{
+ background:#F8FBF9;
+ border:1.5px solid #E5EEE8;
+ border-radius:16px;
+ padding:1.1rem;
+ display:grid;
+ grid-template-columns:1fr auto;
+ gap:1rem;
+ align-items:center;
+ transition:all 0.2s;
+}
+
+.jadwal-item:hover{
+ border-color:var(--hijau-terang);
+ transform:translateY(-2px);
+}
+
+.jadwal-route{
+ font-size:1rem;
+ font-weight:800;
+ color:var(--teks);
+ margin-bottom:0.45rem;
+}
+
+.jadwal-info{
+ display:flex;
+ flex-wrap:wrap;
+ gap:0.7rem;
+ color:var(--teks-muted);
+ font-size:0.82rem;
+}
+
+.jadwal-info span{
+ display:flex;
+ align-items:center;
+ gap:5px;
+}
+
+.jadwal-price{
+ text-align:right;
+}
+
+.jadwal-price strong{
+ display:block;
+ color:var(--hijau);
+ font-size:1.05rem;
+ margin-bottom:0.45rem;
+}
+
+.btn-pilih-jadwal{
+ background:var(--hijau);
+ color:white;
+ border:none;
+ padding:0.55rem 1rem;
+ border-radius:8px;
+ font-family:inherit;
+ font-size:0.82rem;
+ font-weight:700;
+ cursor:pointer;
+ transition:background 0.2s;
+}
+
+.btn-pilih-jadwal:hover{
+ background:var(--hijau-mid);
+}
+
+@media(max-width:600px){
+ .jadwal-item{
+  grid-template-columns:1fr;
+ }
+
+ .jadwal-price{
+  text-align:left;
+ }
+
+ .jadwal-box{
+  padding:1.5rem;
+ }
+
+ .jadwal-title{
+  font-size:1.35rem;
+ }
+}
+
 </style>
 </head>
 <body>
@@ -1425,29 +2563,39 @@ footer{
     <li class="has-dropdown">
       <a href="#">Paket</a>
       <ul class="dropdown">
-        <li><a href="#"><i class="ti ti-calculator" style="margin-right:8px;color:#52B788"></i>Cek Tarif Paket</a></li>
-        <li><a href="#"><i class="ti ti-map-route" style="margin-right:8px;color:#52B788"></i>Lacak Paket</a></li>
-        
+        <li>
+          <a href="#" onclick="openTarifPaket(event)">
+            <i class="ti ti-calculator" style="margin-right:8px;color:#52B788"></i>Cek Tarif Paket
+          </a>
+        </li>
+        <li>
+          <a href="#" onclick="openLacakPaket(event)">
+            <i class="ti ti-map-route" style="margin-right:8px;color:#52B788"></i>Lacak Paket
+          </a>
+        </li>
       </ul>
     </li>
-    <li><a href="#">Rute</a></li>
-    <li><a href="#">Tentang Kami</a></li>
+    <li><a href="#rute-section">Rute</a></li>
+    <li><a href="#footer-section">Tentang Kami</a></li>
   </ul>
   <div class="nav-right">
-    <button class="btn-outline-white">Cek Tiket</button>
-    <button class="btn-kuning">Masuk</button>
+    <button class="btn-outline-white" onclick="openCekTiket()">Cek Tiket</button>
+    <button class="btn-kuning" onclick="openLogin()">Masuk</button>
   </div>
   <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 
+
+<!-- ==================== HERO AREA DENGAN BACKGROUND FULL ==================== -->
+<div class="hero-area">
 
 <!-- ==================== HERO / BANNER UTAMA ==================== -->
 <section class="hero">
   <div class="hero-dots"></div>
   <div class="hero-circle"></div>
   <div class="hero-inner">
-    <div class="hero-tag"><i class="ti ti-shield-check" style="font-size:0.85rem"></i> Armada ber-AC & tepat waktu</div>
-    <h1>Perjalanan Antar Kota<br>yang <span>Nyaman & Hemat</span></h1>
+    <div class="hero-tag"><i class="ti ti-shield-check" style="font-size:0.85rem"></i> Armada ber-AC &amp; tepat waktu</div>
+    <h1>Perjalanan Antar Kota<br>yang <span>Nyaman &amp; Hemat</span></h1>
     <p>Pesan tiket shuttle bus online — mudah, cepat, dan langsung terkonfirmasi. Tersedia berbagai rute di pulau jawa</p>
   </div>
 </section>
@@ -1460,6 +2608,7 @@ footer{
       <button class="trip-tab active" onclick="setTab(this)">Sekali Jalan</button>
       <button class="trip-tab" onclick="setTab(this)">Pulang Pergi</button>
     </div>
+
     <div class="swap-row">
       <div class="field">
         <label>Keberangkatan</label>
@@ -1469,7 +2618,7 @@ footer{
         </select>
       </div>
       <div class="swap-center">
-        <button class="swap-btn" onclick="swapRute()" title="Tukar keberangkatan & tujuan">
+        <button class="swap-btn" onclick="swapRute()" title="Tukar keberangkatan &amp; tujuan">
           <i class="ti ti-arrows-right-left"></i>
         </button>
       </div>
@@ -1481,22 +2630,39 @@ footer{
         </select>
       </div>
     </div>
-    <div class="extra-row">
-      <div class="field">
+
+    <!-- ===== EXTRA ROW: Tanggal Pergi + Tanggal Kembali (opsional) + Penumpang ===== -->
+    <div class="extra-row" id="extra-row">
+
+      <!-- Tanggal Pergi -->
+      <div class="field field-pergi">
         <label>Tanggal Pergi</label>
         <input type="date" id="tgl-pergi">
       </div>
-      <div class="field">
+
+      <!-- Tanggal Kembali — hanya muncul saat Pulang Pergi -->
+      <div class="field field-kembali" id="tgl-kembali-wrap">
+        <label>
+          Tanggal Kembali
+          
+        </label>
+        <input type="date" id="tgl-kembali">
+      </div>
+
+      <!-- Penumpang -->
+      <div class="field field-penumpang">
         <label>Penumpang</label>
-        <select>
+        <select id="jumlah-penumpang">
           <option>1 Penumpang</option><option>2 Penumpang</option><option>3 Penumpang</option>
           <option>4 Penumpang</option><option>5+ Penumpang</option>
         </select>
       </div>
+
     </div>
+
     <div class="search-footer">
       <span class="search-note"><i class="ti ti-tag" style="color:#52B788;font-size:0.9rem"></i> Harga mulai Rp 75.000</span>
-      <button class="btn-search"><i class="ti ti-search"></i> Cari Jadwal</button>
+      <button class="btn-search" onclick="cariJadwal()"><i class="ti ti-search"></i> Cari Jadwal</button>
     </div>
   </div>
 </div>
@@ -1513,11 +2679,14 @@ footer{
       </div>
     </div>
     <div class="promo-inline-right">
+      <span class="promo-inline-info">Kode Promo:</span>
       <span class="promo-inline-code">WEEKEND20</span>
-      <button class="promo-inline-btn">Pakai Sekarang</button>
     </div>
   </div>
 </div>
+
+</div>
+<!-- ==================== AKHIR HERO AREA ==================== -->
 
 
 <!-- ==================== STATISTIK LAYANAN ==================== -->
@@ -1532,13 +2701,13 @@ footer{
 
 
 <!-- ==================== OUTLET / KOTA TERSEDIA ==================== -->
-<section class="outlet-section">
+<section class="outlet-section" id="rute-section">
   <div class="outlet-head">
     <p class="sec-title">Tersebar di Berbagai Kota <span>Indonesia</span></p>
   </div>
   <div class="outlet-layout">
     <div class="city-panel">
-      <div class="city-card ">
+      <div class="city-card" onclick="openPool(0)">
         <div class="city-photo">
           <img src="image/jakarta.jpg" alt="Jakarta" class="city-img">
           <span class="city-rank">1</span>
@@ -1546,15 +2715,15 @@ footer{
         <div class="city-info"><h3>Jakarta</h3><p>5 Outlet tersedia</p></div>
         <button class="city-go"><i class="ti ti-chevron-right"></i></button>
       </div>
-      <div class="city-card">
+      <div class="city-card" onclick="openPool(1)">
         <div class="city-photo">
-        <img src="image/bandung.jpg" alt="Bandung" class="city-img">
-        <span class="city-rank">2</span>
-      </div>
+          <img src="image/bandung.jpg" alt="Bandung" class="city-img">
+          <span class="city-rank">2</span>
+        </div>
         <div class="city-info"><h3>Bandung</h3><p>4 Outlet tersedia</p></div>
         <button class="city-go"><i class="ti ti-chevron-right"></i></button>
       </div>
-      <div class="city-card">
+      <div class="city-card" onclick="openPool(2)">
         <div class="city-photo">
           <img src="image/bogor.jpg" alt="bogor" class="city-img">
           <span class="city-rank">3</span>
@@ -1562,7 +2731,7 @@ footer{
         <div class="city-info"><h3>Bogor</h3><p>3 Outlet tersedia</p></div>
         <button class="city-go"><i class="ti ti-chevron-right"></i></button>
       </div>
-      <div class="city-card">
+      <div class="city-card" onclick="openPool(3)">
         <div class="city-photo">
           <img src="image/karawang.jpg" alt="karawang" class="city-img">
           <span class="city-rank">4</span>
@@ -1573,8 +2742,8 @@ footer{
     </div>
     <div class="map-card">
       <div class="map-box">
-          <img src="image/peta.png" alt="Peta Rute NusaBus" class="map-img">
-        </div>
+        <img src="image/peta.png" alt="Peta Rute NusaBus" class="map-img">
+      </div>
       <div class="help-box">
         <h3>Butuh Bantuan?</h3>
         <div class="help-list">
@@ -1647,47 +2816,37 @@ footer{
         Temukan tips perjalanan, panduan pemesanan tiket, dan informasi rute agar perjalanan antar kota Anda lebih nyaman, aman, dan hemat.
       </p>
     </div>
-
     <div class="artikel-grid">
-      <div class="artikel-card">
+      <div class="artikel-card" onclick="openArtikel(0)">
         <div class="artikel-icon"><i class="ti ti-map-route"></i></div>
         <h3>Pool NusaBus Pasteur Pindah Lokasi, Ini Lokasi Barunya</h3>
-        <p>
-         Per tanggal 20 mei pool nusabus pasteur pindah lokasi silahkan cek lokasi barunya di artikel ini
-        </p>
+        <p>Per tanggal 20 mei pool nusabus pasteur pindah lokasi silahkan cek lokasi barunya di artikel ini</p>
         <div class="artikel-meta">
           <i class="ti ti-calendar"></i>
           <span>NusaBus • 24 Mei 2026</span>
         </div>
       </div>
-
-      <div class="artikel-card">
+      <div class="artikel-card" onclick="openArtikel(1)">
         <div class="artikel-icon"><i class="ti ti-ticket"></i></div>
         <h3>Cara Pesan Tiket NusaBus Secara Online</h3>
-        <p>
-          Mulai dari memilih kota asal, tujuan, tanggal berangkat, jumlah penumpang, hingga mendapatkan konfirmasi tiket perjalanan.
-        </p>
+        <p>Mulai dari memilih kota asal, tujuan, tanggal berangkat, jumlah penumpang, hingga mendapatkan konfirmasi tiket perjalanan.</p>
         <div class="artikel-meta">
           <i class="ti ti-calendar"></i>
           <span>NusaBus • 23 Mei 2026</span>
         </div>
       </div>
-
-      <div class="artikel-card">
+      <div class="artikel-card" onclick="openArtikel(2)">
         <div class="artikel-icon"><i class="ti ti-shield-check"></i></div>
         <h3>Kenapa Keamanan Armada Itu Penting?</h3>
-        <p>
-          Ketahui pentingnya armada ber-AC, pengemudi bersertifikat, CCTV, dashcam, dan pelacakan GPS untuk kenyamanan penumpang.
-        </p>
+        <p>Ketahui pentingnya armada ber-AC, pengemudi bersertifikat, CCTV, dashcam, dan pelacakan GPS untuk kenyamanan penumpang.</p>
         <div class="artikel-meta">
           <i class="ti ti-calendar"></i>
           <span>NusaBus • 22 Mei 2026</span>
         </div>
       </div>
     </div>
-
     <div class="artikel-action">
-      <button class="btn-artikel">Lihat Semua Artikel</button>
+      <button class="btn-artikel" onclick="openSemuaArtikel()">Lihat Semua Artikel</button>
     </div>
   </div>
 </section>
@@ -1701,7 +2860,6 @@ footer{
       <p class="sec-title">Apa Kata Mereka?</p>
     </div>
     <div class="testi-grid">
-
       <div class="testi-card">
         <div class="testi-quote">"</div>
         <div class="testi-stars">★★★★★</div>
@@ -1714,11 +2872,10 @@ footer{
           </div>
         </div>
       </div>
-
       <div class="testi-card">
         <div class="testi-quote">"</div>
         <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">Harganya terjangkau banget . Pesan tiketnya gampang, langsung dapat konfirmasi. Armadanya juga bersih dan terawat.</p>
+        <p class="testi-text">Harganya terjangkau banget. Pesan tiketnya gampang, langsung dapat konfirmasi. Armadanya juga bersih dan terawat.</p>
         <div class="testi-author">
           <div class="testi-avatar" style="background:#2D6A4F">SR</div>
           <div>
@@ -1727,7 +2884,6 @@ footer{
           </div>
         </div>
       </div>
-
       <div class="testi-card">
         <div class="testi-quote">"</div>
         <div class="testi-stars">★★★★☆</div>
@@ -1740,47 +2896,38 @@ footer{
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
 
 <!-- ==================== FOOTER ==================== -->
-<footer>
+<footer id="footer-section">
   <div class="footer-inner">
     <div class="footer-top">
-
       <div class="footer-brand">
         <div class="footer-logo">Nusa<span>Bus</span></div>
-        <p class="footer-desc">
-          Shuttle bus antar kota terpercaya — nyaman, aman, dan harga transparan sejak 2015.
-        </p>
+        <p class="footer-desc">Shuttle bus antar kota terpercaya — nyaman, aman, dan harga transparan sejak 2015.</p>
       </div>
-
       <div class="footer-cols">
-
         <div class="footer-col">
           <h5>Layanan</h5>
           <ul>
-            <li><a href="#">Shuttle Reguler</a></li>
-            <li><a href="#">Charter Armada</a></li>
-            <li><a href="#">Paket Wisata</a></li>
-            <li><a href="#">Pengiriman Barang</a></li>
-            <li><a href="#">Kebijakan Privasi</a></li>
+            <li><a href="#" onclick="openFooterInfo(event, 'shuttle')">Shuttle Reguler</a></li>
+            <li><a href="#" onclick="openFooterInfo(event, 'charter')">Charter Armada</a></li>
+            <li><a href="#" onclick="openFooterInfo(event, 'barang')">Pengiriman Barang</a></li>
+            <li><a href="#" onclick="openFooterInfo(event, 'privasi')">Kebijakan Privasi</a></li>
           </ul>
         </div>
-
         <div class="footer-col">
           <h5>Bantuan</h5>
           <ul>
-            <li><a href="#">Cara Pesan</a></li>
-            <li><a href="#">Kebijakan Refund</a></li>
-            <li><a href="#">Hubungi Kami</a></li>
-            <li><a href="#">FAQ</a></li>
+            <li><a href="#" onclick="openFooterInfo(event, 'caraPesan')">Cara Pesan</a></li>
+            <li><a href="#" onclick="openFooterInfo(event, 'refund')">Kebijakan Refund</a></li>
+            <li><a href="#" onclick="openFooterInfo(event, 'hubungi')">Hubungi Kami</a></li>
+            <li><a href="#" onclick="openFooterInfo(event, 'faq')">FAQ</a></li>
           </ul>
         </div>
-
         <div class="footer-socials-col">
           <h5>Terhubung dengan Kami</h5>
           <div class="footer-socials-list">
@@ -1798,10 +2945,8 @@ footer{
             </a>
           </div>
         </div>
-
       </div>
     </div>
-
     <div class="footer-bottom">
       <p>© 2026 NusaBus.</p>
     </div>
@@ -1809,32 +2954,1378 @@ footer{
 </footer>
 
 
+<!-- ==================== POPUP INFO FOOTER ==================== -->
+<div class="footer-info-modal" id="footerInfoModal" onclick="closeFooterInfoArea(event)">
+  <div class="footer-info-box">
+    <button class="footer-info-close" onclick="closeFooterInfo()" aria-label="Tutup info footer">
+      <i class="ti ti-x"></i>
+    </button>
+
+    <div class="footer-info-label" id="footerInfoLabel">NusaBus</div>
+    <h2 class="footer-info-title" id="footerInfoTitle"></h2>
+    <p class="footer-info-subtitle" id="footerInfoSubtitle"></p>
+    <div class="footer-info-content" id="footerInfoContent"></div>
+    <div class="footer-info-action" id="footerInfoAction"></div>
+  </div>
+</div>
+
+
+<!-- ==================== POPUP DETAIL ARTIKEL ==================== -->
+<div class="artikel-modal" id="artikelModal" onclick="closeArtikelArea(event)">
+  <div class="artikel-modal-box">
+    <button class="artikel-modal-close" onclick="closeArtikel()" aria-label="Tutup artikel">
+      <i class="ti ti-x"></i>
+    </button>
+
+    <div class="artikel-modal-label">Artikel NusaBus</div>
+    <h2 class="artikel-modal-title" id="modalArtikelTitle"></h2>
+
+    <div class="artikel-modal-date">
+      <i class="ti ti-calendar"></i>
+      <span id="modalArtikelDate"></span>
+    </div>
+
+    <div class="artikel-modal-content" id="modalArtikelContent"></div>
+  </div>
+</div>
+
+
+<!-- ==================== POPUP SEMUA ARTIKEL ==================== -->
+<div class="semua-artikel-modal" id="semuaArtikelModal" onclick="closeSemuaArtikelArea(event)">
+  <div class="semua-artikel-box">
+    <button class="semua-artikel-close" onclick="closeSemuaArtikel()" aria-label="Tutup semua artikel">
+      <i class="ti ti-x"></i>
+    </button>
+
+    <div class="semua-artikel-label">Semua Artikel NusaBus</div>
+    <h2 class="semua-artikel-title">Artikel &amp; Tips Perjalanan</h2>
+    <p class="semua-artikel-subtitle">
+      Pilih artikel yang ingin kamu baca untuk melihat informasi lengkapnya.
+    </p>
+
+    <div class="semua-artikel-list">
+      <div class="semua-artikel-item" onclick="openArtikel(0); closeSemuaArtikel();">
+        <div class="semua-artikel-icon"><i class="ti ti-map-route"></i></div>
+        <div>
+          <h4>Pool NusaBus Pasteur Pindah Lokasi, Ini Lokasi Barunya</h4>
+          <p>NusaBus • 24 Mei 2026</p>
+        </div>
+      </div>
+
+      <div class="semua-artikel-item" onclick="openArtikel(1); closeSemuaArtikel();">
+        <div class="semua-artikel-icon"><i class="ti ti-ticket"></i></div>
+        <div>
+          <h4>Cara Pesan Tiket NusaBus Secara Online</h4>
+          <p>NusaBus • 23 Mei 2026</p>
+        </div>
+      </div>
+
+      <div class="semua-artikel-item" onclick="openArtikel(2); closeSemuaArtikel();">
+        <div class="semua-artikel-icon"><i class="ti ti-shield-check"></i></div>
+        <div>
+          <h4>Kenapa Keamanan Armada Itu Penting?</h4>
+          <p>NusaBus • 22 Mei 2026</p>
+        </div>
+      </div>
+
+      <div class="semua-artikel-item" onclick="openArtikel(3); closeSemuaArtikel();">
+        <div class="semua-artikel-icon"><i class="ti ti-clock"></i></div>
+        <div>
+          <h4>Tips Datang Tepat Waktu Sebelum Keberangkatan</h4>
+          <p>NusaBus • 21 Mei 2026</p>
+        </div>
+      </div>
+
+      <div class="semua-artikel-item" onclick="openArtikel(4); closeSemuaArtikel();">
+        <div class="semua-artikel-icon"><i class="ti ti-luggage"></i></div>
+        <div>
+          <h4>Aturan Barang Bawaan Penumpang NusaBus</h4>
+          <p>NusaBus • 20 Mei 2026</p>
+        </div>
+      </div>
+
+      <div class="semua-artikel-item" onclick="openArtikel(5); closeSemuaArtikel();">
+        <div class="semua-artikel-icon"><i class="ti ti-credit-card"></i></div>
+        <div>
+          <h4>Metode Pembayaran yang Tersedia di NusaBus</h4>
+          <p>NusaBus • 19 Mei 2026</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ==================== POPUP DETAIL POOL / OUTLET KOTA ==================== -->
+<div class="pool-modal" id="poolModal" onclick="closePoolArea(event)">
+  <div class="pool-modal-box">
+    <button class="pool-modal-close" onclick="closePool()" aria-label="Tutup daftar pool">
+      <i class="ti ti-x"></i>
+    </button>
+
+    <div class="pool-modal-label">Outlet NusaBus</div>
+    <h2 class="pool-modal-title" id="poolTitle"></h2>
+    <p class="pool-modal-subtitle" id="poolSubtitle"></p>
+
+    <div class="pool-list" id="poolList"></div>
+  </div>
+</div>
+
+
+
+<!-- ==================== POPUP CEK TARIF PAKET ==================== -->
+<div class="paket-modal" id="tarifPaketModal" onclick="closeTarifPaketArea(event)">
+  <div class="paket-modal-box">
+    <button class="paket-modal-close" onclick="closeTarifPaket()">
+      <i class="ti ti-x"></i>
+    </button>
+
+    <div class="paket-modal-label">Pengiriman Barang</div>
+    <h2 class="paket-modal-title">Cek Tarif Paket</h2>
+    <p class="paket-modal-subtitle">
+      Pilih kota asal, kota tujuan, dan berat paket untuk melihat estimasi tarif pengiriman.
+    </p>
+
+    <div class="paket-form">
+      <div class="field">
+        <label>Kota Asal</label>
+        <select id="paket-asal">
+          <option value="">Pilih kota asal</option>
+          <option>Jakarta</option>
+          <option>Bandung</option>
+          <option>Bogor</option>
+          <option>Karawang</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Kota Tujuan</label>
+        <select id="paket-tujuan">
+          <option value="">Pilih kota tujuan</option>
+          <option>Jakarta</option>
+          <option>Bandung</option>
+          <option>Bogor</option>
+          <option>Karawang</option>
+        </select>
+      </div>
+
+      <div class="field field-full">
+        <label>Berat Paket</label>
+        <select id="paket-berat">
+          <option value="">Pilih berat paket</option>
+          <option value="1">1 Kg</option>
+          <option value="2">2 Kg</option>
+          <option value="3">3 Kg</option>
+          <option value="5">5 Kg</option>
+          <option value="10">10 Kg</option>
+        </select>
+      </div>
+
+      <div class="field field-full">
+        <button class="btn-paket" onclick="cekTarifPaket()">Cek Tarif Sekarang</button>
+      </div>
+    </div>
+
+    <div class="paket-result" id="tarifResult"></div>
+  </div>
+</div>
+
+
+<!-- ==================== POPUP LACAK PAKET ==================== -->
+<div class="paket-modal" id="lacakPaketModal" onclick="closeLacakPaketArea(event)">
+  <div class="paket-modal-box">
+    <button class="paket-modal-close" onclick="closeLacakPaket()">
+      <i class="ti ti-x"></i>
+    </button>
+
+    <div class="paket-modal-label">Tracking Paket</div>
+    <h2 class="paket-modal-title">Lacak Paket</h2>
+    <p class="paket-modal-subtitle">
+      Masukkan nomor resi untuk melihat status pengiriman paket Anda.
+    </p>
+
+    <div class="paket-form">
+      <div class="field field-full">
+        <label>Nomor Resi</label>
+        <input type="text" id="nomor-resi" placeholder="Contoh: NBX2026001">
+      </div>
+
+      <div class="field field-full">
+        <button class="btn-paket" onclick="cekLacakPaket()">Lacak Paket</button>
+      </div>
+    </div>
+
+    <div class="paket-result" id="lacakResult"></div>
+  </div>
+</div>
+
+
+
+<!-- ==================== POPUP CEK TIKET ==================== -->
+<div class="auth-modal" id="cekTiketModal" onclick="closeCekTiketArea(event)">
+  <div class="auth-box">
+    <button class="auth-close" onclick="closeCekTiket()">
+      <i class="ti ti-x"></i>
+    </button>
+
+    <div class="auth-label">Cek Tiket NusaBus</div>
+    <h2 class="auth-title">Cek Status Tiket</h2>
+    <p class="auth-subtitle">
+      Masukkan kode booking untuk melihat detail tiket dan status perjalanan Anda.
+    </p>
+
+    <div class="auth-form">
+      <div class="field">
+        <label>Kode Booking</label>
+        <input type="text" id="kode-booking" placeholder="Contoh: NBT2026001">
+      </div>
+
+      <button class="auth-btn" onclick="cekTiket()">Cek Tiket</button>
+    </div>
+
+    <div class="auth-result" id="cekTiketResult"></div>
+  </div>
+</div>
+
+
+<!-- ==================== POPUP LOGIN / MASUK ==================== -->
+<div class="auth-modal" id="loginModal" onclick="closeLoginArea(event)">
+  <div class="auth-box">
+    <button class="auth-close" onclick="closeLogin()">
+      <i class="ti ti-x"></i>
+    </button>
+
+    <div class="auth-label">Akun NusaBus</div>
+    <h2 class="auth-title">Masuk Akun</h2>
+    <p class="auth-subtitle">
+      Masuk untuk melihat riwayat pemesanan, tiket aktif, dan promo khusus pengguna.
+    </p>
+
+    <div class="auth-form">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="Masukkan email">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Masukkan password">
+      </div>
+
+      <button class="auth-btn" onclick="loginAkun()">Masuk</button>
+    </div>
+
+    <div class="auth-result" id="loginResult"></div>
+
+    <p class="auth-small">
+      Belum punya akun? <a href="#">Daftar sekarang</a>
+    </p>
+  </div>
+</div>
+
+
+
+<!-- ==================== POPUP HASIL JADWAL ==================== -->
+<div class="jadwal-modal" id="jadwalModal" onclick="closeJadwalArea(event)">
+  <div class="jadwal-box">
+    <button class="jadwal-close" onclick="closeJadwal()">
+      <i class="ti ti-x"></i>
+    </button>
+
+    <div class="jadwal-label">Jadwal Perjalanan</div>
+    <h2 class="jadwal-title" id="jadwalTitle">Hasil Pencarian Jadwal</h2>
+    <p class="jadwal-subtitle" id="jadwalSubtitle"></p>
+
+    <div class="jadwal-list" id="jadwalList"></div>
+  </div>
+</div>
+
 <!-- ==================== JAVASCRIPT INTERAKSI ==================== -->
 <script>
-// Mengatur tab Sekali Jalan / Pulang Pergi
-function setTab(el){
-  document.querySelectorAll('.trip-tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-}
-
-// Menukar kota keberangkatan dan tujuan
-function swapRute(){
-  const asal=document.getElementById('kota-asal');
-  const tujuan=document.getElementById('kota-tujuan');
-  const tmp=asal.value; asal.value=tujuan.value; tujuan.value=tmp;
-  const btn=document.querySelector('.swap-btn');
-  btn.style.transform='rotate(180deg)';
-  setTimeout(()=>{btn.style.transform='';},400);
-}
-
-// Set tanggal minimal hari ini pada input date
+// Set tanggal minimal hari ini
 const today = new Date().toISOString().split('T')[0];
 document.getElementById('tgl-pergi').value = today;
 
-// Script Toggle Mobile Menu Navbar
-document.querySelector('.hamburger').addEventListener('click', function() {
+// Pastikan tampilan awal selalu mode Sekali Jalan
+document.getElementById('extra-row').classList.remove('tiga-kolom');
+document.getElementById('tgl-kembali-wrap').classList.remove('visible');
+document.getElementById('tgl-kembali-wrap').style.display = 'none';
+
+// ---- Tab Sekali Jalan / Pulang Pergi ----
+function setTab(el) {
+  document.querySelectorAll('.trip-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+
+  const isPP = el.textContent.trim() === 'Pulang Pergi';
+  const extraRow    = document.getElementById('extra-row');
+  const kembaliWrap = document.getElementById('tgl-kembali-wrap');
+  const tglKembali  = document.getElementById('tgl-kembali');
+  const tglPergi    = document.getElementById('tgl-pergi');
+
+  if (isPP) {
+    // Tampilkan field Tanggal Kembali + ubah grid ke 3 kolom
+    extraRow.classList.add('tiga-kolom');
+    kembaliWrap.style.display = 'flex';
+    kembaliWrap.style.flexDirection = 'column';
+    kembaliWrap.style.gap = '4px';
+    // Trigger animasi masuk
+    requestAnimationFrame(() => kembaliWrap.classList.add('visible'));
+
+    // Set nilai default tanggal kembali = besok
+    const besok = new Date();
+    besok.setDate(besok.getDate() + 1);
+    const besokStr = besok.toISOString().split('T')[0];
+    tglKembali.min = tglPergi.value || today;
+    if (!tglKembali.value || tglKembali.value <= tglPergi.value) {
+      tglKembali.value = besokStr;
+    }
+  } else {
+    // Sembunyikan field Tanggal Kembali + kembalikan ke 2 kolom
+    kembaliWrap.classList.remove('visible');
+    extraRow.classList.remove('tiga-kolom');
+    // Tunggu animasi selesai baru hide
+    setTimeout(() => {
+      if (!kembaliWrap.classList.contains('visible')) {
+        kembaliWrap.style.display = 'none';
+      }
+    }, 260);
+  }
+}
+
+// Sinkronisasi: min tanggal kembali ikut tanggal pergi
+document.getElementById('tgl-pergi').addEventListener('change', function () {
+  const kembali = document.getElementById('tgl-kembali');
+  kembali.min = this.value;
+  if (kembali.value && kembali.value < this.value) {
+    // Geser kembali jadi 1 hari setelah pergi
+    const next = new Date(this.value);
+    next.setDate(next.getDate() + 1);
+    kembali.value = next.toISOString().split('T')[0];
+  }
+});
+
+// ---- Tukar kota keberangkatan dan tujuan ----
+function swapRute() {
+  const asal   = document.getElementById('kota-asal');
+  const tujuan = document.getElementById('kota-tujuan');
+  const tmp    = asal.value;
+  asal.value   = tujuan.value;
+  tujuan.value = tmp;
+  const btn = document.querySelector('.swap-btn');
+  btn.style.transform = 'rotate(180deg)';
+  setTimeout(() => { btn.style.transform = ''; }, 400);
+}
+
+// ---- Toggle Mobile Menu Navbar ----
+document.querySelector('.hamburger').addEventListener('click', function () {
   document.querySelector('nav').classList.toggle('menu-open');
 });
+
+
+// ---- Popup Detail Artikel ----
+const dataArtikel = [
+  {
+    title: "Pool NusaBus Pasteur Pindah Lokasi, Ini Lokasi Barunya",
+    date: "NusaBus • 24 Mei 2026",
+    content: `
+      <p>Mulai tanggal 20 Mei 2026, Pool NusaBus Pasteur resmi berpindah ke lokasi baru untuk meningkatkan kenyamanan penumpang.</p>
+      <p>Lokasi baru ini dipilih karena lebih mudah diakses, memiliki area tunggu yang lebih nyaman, serta area parkir yang lebih luas untuk armada dan penumpang.</p>
+      <p>Penumpang yang akan berangkat dari area Pasteur disarankan untuk mengecek kembali titik keberangkatan sebelum melakukan perjalanan agar tidak salah lokasi.</p>
+    `
+  },
+  {
+    title: "Cara Pesan Tiket NusaBus Secara Online",
+    date: "NusaBus • 23 Mei 2026",
+    content: `
+      <p>Pemesanan tiket NusaBus dapat dilakukan secara online melalui website dengan memilih kota asal, kota tujuan, tanggal keberangkatan, dan jumlah penumpang.</p>
+      <p>Setelah data perjalanan dipilih, sistem akan menampilkan jadwal yang tersedia. Penumpang dapat memilih jadwal sesuai kebutuhan.</p>
+      <p>Setelah pembayaran berhasil, tiket akan langsung dikonfirmasi dan dapat digunakan saat proses keberangkatan.</p>
+    `
+  },
+  {
+    title: "Kenapa Keamanan Armada Itu Penting?",
+    date: "NusaBus • 22 Mei 2026",
+    content: `
+      <p>Keamanan armada menjadi salah satu faktor penting dalam perjalanan antar kota karena menyangkut kenyamanan dan keselamatan penumpang.</p>
+      <p>NusaBus menggunakan armada yang dilengkapi AC, CCTV, dashcam, serta sistem pelacakan GPS untuk membantu memantau perjalanan secara real-time.</p>
+      <p>Selain itu, pengemudi juga dipilih berdasarkan standar operasional agar perjalanan tetap aman, nyaman, dan tepat waktu.</p>
+    `
+  },
+  {
+    title: "Tips Datang Tepat Waktu Sebelum Keberangkatan",
+    date: "NusaBus • 21 Mei 2026",
+    content: `
+      <p>Penumpang disarankan datang ke pool minimal 30 menit sebelum jadwal keberangkatan.</p>
+      <p>Hal ini penting agar proses check-in, pengecekan tiket, dan penempatan barang bawaan dapat dilakukan dengan lebih nyaman.</p>
+      <p>Datang lebih awal juga membantu menghindari risiko tertinggal armada, terutama saat kondisi lalu lintas sedang padat.</p>
+    `
+  },
+  {
+    title: "Aturan Barang Bawaan Penumpang NusaBus",
+    date: "NusaBus • 20 Mei 2026",
+    content: `
+      <p>Setiap penumpang diperbolehkan membawa barang bawaan pribadi dengan ukuran wajar dan tidak mengganggu kenyamanan penumpang lain.</p>
+      <p>Barang besar dapat ditempatkan di bagasi armada sesuai kapasitas yang tersedia.</p>
+      <p>Penumpang tidak diperbolehkan membawa barang berbahaya, mudah terbakar, atau barang yang melanggar ketentuan perjalanan.</p>
+    `
+  },
+  {
+    title: "Metode Pembayaran yang Tersedia di NusaBus",
+    date: "NusaBus • 19 Mei 2026",
+    content: `
+      <p>NusaBus menyediakan beberapa metode pembayaran agar proses pemesanan tiket menjadi lebih mudah.</p>
+      <p>Penumpang dapat menggunakan transfer bank, dompet digital, atau pembayaran langsung di outlet tertentu.</p>
+      <p>Setelah pembayaran berhasil, tiket akan dikonfirmasi dan dapat digunakan saat keberangkatan.</p>
+    `
+  }
+];
+
+function openArtikel(index){
+  const artikel = dataArtikel[index];
+
+  document.getElementById("modalArtikelTitle").innerHTML = artikel.title;
+  document.getElementById("modalArtikelDate").innerHTML = artikel.date;
+  document.getElementById("modalArtikelContent").innerHTML = artikel.content;
+
+  document.getElementById("artikelModal").classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeArtikel(){
+  document.getElementById("artikelModal").classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function closeArtikelArea(event){
+  if(event.target.id === "artikelModal"){
+    closeArtikel();
+  }
+}
+
+
+// ---- Popup Semua Artikel ----
+function openSemuaArtikel(){
+  document.getElementById("semuaArtikelModal").classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeSemuaArtikel(){
+  document.getElementById("semuaArtikelModal").classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function closeSemuaArtikelArea(event){
+  if(event.target.id === "semuaArtikelModal"){
+    closeSemuaArtikel();
+  }
+}
+
+
+// ---- Popup Pool / Outlet Kota ----
+const dataPool = [
+  {
+    kota: "Jakarta",
+    jumlah: "5 Outlet tersedia",
+    pools: [
+      {
+        nama: "Pool Jakarta Selatan",
+        alamat: "Jl. TB Simatupang No. 18, Jakarta Selatan",
+        jam: "Buka 05.00 - 21.00"
+      },
+      {
+        nama: "Pool Blok M",
+        alamat: "Area Terminal Blok M, Jakarta Selatan",
+        jam: "Buka 06.00 - 20.00"
+      },
+      {
+        nama: "Pool Kampung Rambutan",
+        alamat: "Terminal Kampung Rambutan, Jakarta Timur",
+        jam: "Buka 05.30 - 22.00"
+      },
+      {
+        nama: "Pool Kelapa Gading",
+        alamat: "Jl. Boulevard Raya, Kelapa Gading, Jakarta Utara",
+        jam: "Buka 06.00 - 21.00"
+      },
+      {
+        nama: "Pool Grogol",
+        alamat: "Jl. Kyai Tapa, Grogol, Jakarta Barat",
+        jam: "Buka 06.00 - 20.00"
+      }
+    ]
+  },
+  {
+    kota: "Bandung",
+    jumlah: "4 Outlet tersedia",
+    pools: [
+      {
+        nama: "Pool Dago",
+        alamat: "Jl. Dagoan No. 12, Bandung",
+        jam: "Buka 05.00 - 21.00"
+      },
+      {
+        nama: "Pool Pasteur",
+        alamat: "Jl. Dr. Djunjunan, Pasteur, Bandung",
+        jam: "Buka 05.30 - 22.00"
+      },
+      {
+        nama: "Pool Buah Batu",
+        alamat: "Jl. Buah Batu No. 88, Bandung",
+        jam: "Buka 06.00 - 20.00"
+      },
+      {
+        nama: "Pool Cihampelas",
+        alamat: "Jl. Cihampelas, Bandung",
+        jam: "Buka 06.00 - 21.00"
+      }
+    ]
+  },
+  {
+    kota: "Bogor",
+    jumlah: "3 Outlet tersedia",
+    pools: [
+      {
+        nama: "Pool Bogor Kota",
+        alamat: "Jl. Pajajaran No. 25, Bogor",
+        jam: "Buka 05.30 - 21.00"
+      },
+      {
+        nama: "Pool Baranangsiang",
+        alamat: "Area Terminal Baranangsiang, Bogor",
+        jam: "Buka 06.00 - 22.00"
+      },
+      {
+        nama: "Pool Cibinong",
+        alamat: "Jl. Raya Jakarta-Bogor, Cibinong",
+        jam: "Buka 06.00 - 20.00"
+      }
+    ]
+  },
+  {
+    kota: "Karawang",
+    jumlah: "2 Outlet tersedia",
+    pools: [
+      {
+        nama: "Pool Karawang Barat",
+        alamat: "Jl. Interchange Karawang Barat, Karawang",
+        jam: "Buka 06.00 - 21.00"
+      },
+      {
+        nama: "Pool Karawang Timur",
+        alamat: "Jl. Raya Klari, Karawang Timur",
+        jam: "Buka 06.00 - 20.00"
+      }
+    ]
+  }
+];
+
+function openPool(index){
+  const kota = dataPool[index];
+
+  document.getElementById("poolTitle").innerHTML = kota.kota;
+  document.getElementById("poolSubtitle").innerHTML = kota.jumlah;
+
+  const poolList = document.getElementById("poolList");
+  poolList.innerHTML = "";
+
+  kota.pools.forEach(function(pool){
+    poolList.innerHTML += `
+      <div class="pool-item">
+        <i class="ti ti-map-pin"></i>
+        <div>
+          <h4>${pool.nama}</h4>
+          <p>${pool.alamat}</p>
+          <span>${pool.jam}</span>
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById("poolModal").classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closePool(){
+  document.getElementById("poolModal").classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function closePoolArea(event){
+  if(event.target.id === "poolModal"){
+    closePool();
+  }
+}
+
+// Tutup popup artikel saat tombol Escape ditekan
+document.addEventListener("keydown", function(event){
+  if(event.key === "Escape"){
+    closeArtikel();
+    closePool();
+    closeSemuaArtikel();
+  }
+});
+
+
+// ---- Popup Cek Tarif Paket ----
+function openTarifPaket(event){
+  if(event){ event.preventDefault(); }
+  document.getElementById("tarifPaketModal").classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeTarifPaket(){
+  document.getElementById("tarifPaketModal").classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function closeTarifPaketArea(event){
+  if(event.target.id === "tarifPaketModal"){
+    closeTarifPaket();
+  }
+}
+
+function cekTarifPaket(){
+  const asal = document.getElementById("paket-asal").value;
+  const tujuan = document.getElementById("paket-tujuan").value;
+  const berat = document.getElementById("paket-berat").value;
+  const result = document.getElementById("tarifResult");
+
+  if(!asal || !tujuan || !berat){
+    result.classList.add("active");
+    result.innerHTML = `
+      <h4>Data belum lengkap</h4>
+      <p style="color:#8A9BAD;font-size:0.88rem;line-height:1.6;">
+        Silakan pilih kota asal, kota tujuan, dan berat paket terlebih dahulu.
+      </p>
+    `;
+    return;
+  }
+
+  if(asal === tujuan){
+    result.classList.add("active");
+    result.innerHTML = `
+      <h4>Rute tidak valid</h4>
+      <p style="color:#8A9BAD;font-size:0.88rem;line-height:1.6;">
+        Kota asal dan kota tujuan tidak boleh sama.
+      </p>
+    `;
+    return;
+  }
+
+  const tarifDasar = {
+    "Jakarta-Bandung": 18000,
+    "Jakarta-Bogor": 12000,
+    "Jakarta-Karawang": 15000,
+    "Bandung-Jakarta": 18000,
+    "Bandung-Bogor": 20000,
+    "Bandung-Karawang": 16000,
+    "Bogor-Jakarta": 12000,
+    "Bogor-Bandung": 20000,
+    "Bogor-Karawang": 17000,
+    "Karawang-Jakarta": 15000,
+    "Karawang-Bandung": 16000,
+    "Karawang-Bogor": 17000
+  };
+
+  const key = asal + "-" + tujuan;
+  const dasar = tarifDasar[key] || 15000;
+  const total = dasar * parseInt(berat);
+  const estimasi = "1 - 2 Hari";
+
+  result.classList.add("active");
+  result.innerHTML = `
+    <h4>Estimasi Tarif Paket</h4>
+
+    <div class="paket-result-row">
+      <span>Rute</span>
+      <strong>${asal} → ${tujuan}</strong>
+    </div>
+
+    <div class="paket-result-row">
+      <span>Berat Paket</span>
+      <strong>${berat} Kg</strong>
+    </div>
+
+    <div class="paket-result-row">
+      <span>Estimasi Waktu</span>
+      <strong>${estimasi}</strong>
+    </div>
+
+    <div class="paket-result-row">
+      <span>Total Tarif</span>
+      <strong>Rp ${total.toLocaleString("id-ID")}</strong>
+    </div>
+  `;
+}
+
+
+// ---- Popup Lacak Paket ----
+function openLacakPaket(event){
+  if(event){ event.preventDefault(); }
+  document.getElementById("lacakPaketModal").classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeLacakPaket(){
+  document.getElementById("lacakPaketModal").classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function closeLacakPaketArea(event){
+  if(event.target.id === "lacakPaketModal"){
+    closeLacakPaket();
+  }
+}
+
+function cekLacakPaket(){
+  const resi = document.getElementById("nomor-resi").value.trim();
+  const result = document.getElementById("lacakResult");
+
+  if(!resi){
+    result.classList.add("active");
+    result.innerHTML = `
+      <h4>Nomor resi belum diisi</h4>
+      <p style="color:#8A9BAD;font-size:0.88rem;line-height:1.6;">
+        Silakan masukkan nomor resi terlebih dahulu. Contoh: NBX2026001
+      </p>
+    `;
+    return;
+  }
+
+  const dataTracking = {
+    "NBX2026001": {
+      rute: "Jakarta → Bandung",
+      status: "Dalam Perjalanan",
+      steps: [
+        ["Paket diterima di Pool Jakarta Selatan", "24 Mei 2026, 08.10"],
+        ["Paket diproses oleh tim NusaBus Cargo", "24 Mei 2026, 09.00"],
+        ["Paket dalam perjalanan menuju Bandung", "24 Mei 2026, 10.30"]
+      ]
+    },
+    "NBX2026002": {
+      rute: "Bandung → Karawang",
+      status: "Sampai di Kota Tujuan",
+      steps: [
+        ["Paket diterima di Pool Dago", "23 Mei 2026, 13.20"],
+        ["Paket dalam perjalanan menuju Karawang", "23 Mei 2026, 15.00"],
+        ["Paket tiba di Pool Karawang Barat", "23 Mei 2026, 18.40"]
+      ]
+    },
+    "NBX2026003": {
+      rute: "Bogor → Jakarta",
+      status: "Sudah Diterima",
+      steps: [
+        ["Paket diterima di Pool Bogor Kota", "22 Mei 2026, 07.45"],
+        ["Paket tiba di Pool Blok M", "22 Mei 2026, 10.15"],
+        ["Paket sudah diterima oleh penerima", "22 Mei 2026, 11.05"]
+      ]
+    },
+    "NBX2026004": {
+      rute: "Karawang → Bogor",
+      status: "Sedang Diproses",
+      steps: [
+        ["Paket diterima di Pool Karawang Barat", "25 Mei 2026, 09.10"],
+        ["Paket sedang diproses oleh tim NusaBus Cargo", "25 Mei 2026, 09.45"],
+        ["Menunggu jadwal keberangkatan armada", "25 Mei 2026, 10.20"]
+      ]
+    }
+  };
+
+  const tracking = dataTracking[resi.toUpperCase()];
+
+  if(!tracking){
+    result.classList.add("active");
+    result.innerHTML = `
+      <h4>Resi tidak ditemukan</h4>
+      <p style="color:#8A9BAD;font-size:0.88rem;line-height:1.6;">
+        Nomor resi <strong>${resi}</strong> belum terdaftar. Coba gunakan contoh resi: NBX2026001, NBX2026002, NBX2026003, atau NBX2026004.
+      </p>
+    `;
+    return;
+  }
+
+  let stepsHTML = "";
+
+  tracking.steps.forEach(function(step, index){
+    stepsHTML += `
+      <div class="tracking-step">
+        <div class="tracking-dot">${index + 1}</div>
+        <div class="tracking-info">
+          <h4>${step[0]}</h4>
+          <p>${step[1]}</p>
+        </div>
+      </div>
+    `;
+  });
+
+  result.classList.add("active");
+  result.innerHTML = `
+    <h4>Status Pengiriman</h4>
+
+    <div class="paket-result-row">
+      <span>Nomor Resi</span>
+      <strong>${resi.toUpperCase()}</strong>
+    </div>
+
+    <div class="paket-result-row">
+      <span>Rute</span>
+      <strong>${tracking.rute}</strong>
+    </div>
+
+    <div class="paket-result-row">
+      <span>Status</span>
+      <strong>${tracking.status}</strong>
+    </div>
+
+    <div style="margin-top:0.8rem;">
+      ${stepsHTML}
+    </div>
+  `;
+}
+
+
+
+// ---- Popup Cek Tiket ----
+function openCekTiket(){
+  document.getElementById("cekTiketModal").classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeCekTiket(){
+  document.getElementById("cekTiketModal").classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function closeCekTiketArea(event){
+  if(event.target.id === "cekTiketModal"){
+    closeCekTiket();
+  }
+}
+
+function cekTiket(){
+  const kode = document.getElementById("kode-booking").value.trim().toUpperCase();
+  const result = document.getElementById("cekTiketResult");
+
+  const dataTiket = {
+    "NBT2026001": {
+      nama: "Andi Ramadhan",
+      rute: "Jakarta → Bandung",
+      tanggal: "24 Mei 2026",
+      jam: "08.00 WIB",
+      kursi: "A3",
+      armada: "NusaBus Executive 01",
+      status: "Tiket Aktif"
+    },
+    "NBT2026002": {
+      nama: "Siti Rahayu",
+      rute: "Bogor → Jakarta",
+      tanggal: "25 Mei 2026",
+      jam: "10.30 WIB",
+      kursi: "B2",
+      armada: "NusaBus Reguler 03",
+      status: "Tiket Aktif"
+    },
+    "NBT2026003": {
+      nama: "Dian Kusuma",
+      rute: "Bandung → Karawang",
+      tanggal: "26 Mei 2026",
+      jam: "14.00 WIB",
+      kursi: "C1",
+      armada: "NusaBus Executive 02",
+      status: "Menunggu Pembayaran"
+    },
+    "NBT2026004": {
+      nama: "Raka Pratama",
+      rute: "Karawang → Jakarta",
+      tanggal: "27 Mei 2026",
+      jam: "16.30 WIB",
+      kursi: "D4",
+      armada: "NusaBus Reguler 05",
+      status: "Tiket Aktif"
+    }
+  };
+
+  if(!kode){
+    result.classList.add("active");
+    result.innerHTML = `
+      <h4>Kode booking belum diisi</h4>
+      <p style="color:#8A9BAD;font-size:0.88rem;line-height:1.6;">
+        Silakan masukkan kode booking terlebih dahulu.
+      </p>
+    `;
+    return;
+  }
+
+  const tiket = dataTiket[kode];
+
+  if(!tiket){
+    result.classList.add("active");
+    result.innerHTML = `
+      <h4>Tiket tidak ditemukan</h4>
+      <p style="color:#8A9BAD;font-size:0.88rem;line-height:1.6;">
+        Kode booking <strong>${kode}</strong> belum terdaftar. Coba gunakan contoh: NBT2026001, NBT2026002, NBT2026003, atau NBT2026004.
+      </p>
+    `;
+    return;
+  }
+
+  result.classList.add("active");
+  result.innerHTML = `
+    <h4>Detail Tiket</h4>
+
+    <div class="auth-result-row">
+      <span>Kode Booking</span>
+      <strong>${kode}</strong>
+    </div>
+
+    <div class="auth-result-row">
+      <span>Nama</span>
+      <strong>${tiket.nama}</strong>
+    </div>
+
+    <div class="auth-result-row">
+      <span>Rute</span>
+      <strong>${tiket.rute}</strong>
+    </div>
+
+    <div class="auth-result-row">
+      <span>Tanggal</span>
+      <strong>${tiket.tanggal}</strong>
+    </div>
+
+    <div class="auth-result-row">
+      <span>Jam</span>
+      <strong>${tiket.jam}</strong>
+    </div>
+
+    <div class="auth-result-row">
+      <span>Kursi</span>
+      <strong>${tiket.kursi}</strong>
+    </div>
+
+    <div class="auth-result-row">
+      <span>Armada</span>
+      <strong>${tiket.armada}</strong>
+    </div>
+
+    <div class="auth-result-row">
+      <span>Status</span>
+      <strong>${tiket.status}</strong>
+    </div>
+  `;
+}
+
+
+// ---- Popup Login / Masuk ----
+function openLogin(){
+  document.getElementById("loginModal").classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeLogin(){
+  document.getElementById("loginModal").classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function closeLoginArea(event){
+  if(event.target.id === "loginModal"){
+    closeLogin();
+  }
+}
+
+function loginAkun(){
+  const email = document.getElementById("login-email").value.trim();
+  const password = document.getElementById("login-password").value.trim();
+  const result = document.getElementById("loginResult");
+
+  if(!email || !password){
+    result.classList.add("active");
+    result.innerHTML = `
+      <h4>Data login belum lengkap</h4>
+      <p style="color:#8A9BAD;font-size:0.88rem;line-height:1.6;">
+        Silakan masukkan email dan password terlebih dahulu.
+      </p>
+    `;
+    return;
+  }
+
+  if(email === "user@nusabus.id" && password === "123456"){
+    result.classList.add("active");
+    result.innerHTML = `
+      <h4>Login berhasil</h4>
+      <p style="color:#8A9BAD;font-size:0.88rem;line-height:1.6;">
+        Selamat datang di akun NusaBus Anda. Anda dapat melihat tiket aktif, riwayat pemesanan, dan promo khusus pengguna.
+      </p>
+    `;
+  } else {
+    result.classList.add("active");
+    result.innerHTML = `
+      <h4>Login gagal</h4>
+      <p style="color:#8A9BAD;font-size:0.88rem;line-height:1.6;">
+        Email atau password salah. Coba gunakan email <strong>user@nusabus.id</strong> dan password <strong>123456</strong>.
+      </p>
+    `;
+  }
+}
+
+
+// ---- Popup Info Footer ----
+const dataFooterInfo = {
+  shuttle: {
+    label: "Layanan NusaBus",
+    title: "Shuttle Reguler",
+    subtitle: "Layanan perjalanan antar kota dengan jadwal rutin setiap hari.",
+    items: [
+      ["ti ti-route", "Rute Aktif", "Tersedia untuk rute Jakarta, Bandung, Bogor, dan Karawang dengan pilihan jadwal pagi, siang, dan sore."],
+      ["ti ti-armchair", "Fasilitas Armada", "Armada ber-AC, kursi nyaman, ruang kaki lega, dan proses keberangkatan dari pool resmi NusaBus."],
+      ["ti ti-ticket", "Pemesanan Mudah", "Tiket dapat dicek melalui kode booking dan jadwal dapat dipilih melalui form pencarian di halaman utama."]
+    ],
+    actions: [
+      { text: "Cari Jadwal", icon: "ti ti-search", type: "scroll", target: "search-section" }
+    ]
+  },
+  charter: {
+    label: "Layanan NusaBus",
+    title: "Charter Armada",
+    subtitle: "Sewa armada untuk kebutuhan rombongan, acara kantor, sekolah, kampus, atau perjalanan keluarga.",
+    items: [
+      ["ti ti-users", "Untuk Rombongan", "Cocok untuk perjalanan grup dengan titik jemput dan tujuan yang dapat disesuaikan."],
+      ["ti ti-calendar-event", "Jadwal Fleksibel", "Waktu keberangkatan dapat disesuaikan dengan kebutuhan acara dan ketersediaan armada."],
+      ["ti ti-shield-check", "Aman dan Nyaman", "Didukung pengemudi berpengalaman dan armada yang dirawat secara berkala."]
+    ],
+    actions: [
+      { text: "Hubungi Admin", icon: "ti ti-phone", type: "phone", target: "tel:02230296767" }
+    ]
+  },
+  barang: {
+    label: "Layanan NusaBus",
+    title: "Pengiriman Barang",
+    subtitle: "Kirim paket antar kota melalui jaringan pool dan armada NusaBus.",
+    items: [
+      ["ti ti-package", "Kirim Antar Pool", "Paket dapat dikirim melalui pool NusaBus yang tersedia di kota asal dan diambil di kota tujuan."],
+      ["ti ti-calculator", "Cek Tarif", "Tarif dihitung berdasarkan rute dan berat paket."],
+      ["ti ti-map-route", "Lacak Resi", "Status paket dapat dicek menggunakan nomor resi pengiriman."]
+    ],
+    actions: [
+      { text: "Cek Tarif Paket", icon: "ti ti-calculator", type: "function", target: "openTarifPaket" },
+      { text: "Lacak Paket", icon: "ti ti-map-route", type: "function", target: "openLacakPaket" }
+    ]
+  },
+  privasi: {
+    label: "Informasi NusaBus",
+    title: "Kebijakan Privasi",
+    subtitle: "Ringkasan penggunaan data pengguna pada website NusaBus.",
+    items: [
+      ["ti ti-lock", "Data Pemesanan", "Data seperti nama, rute, tanggal, dan kode booking digunakan untuk memproses tiket dan layanan pelanggan."],
+      ["ti ti-shield-lock", "Keamanan Data", "NusaBus menjaga data pengguna agar tidak digunakan di luar kebutuhan layanan perjalanan."],
+      ["ti ti-bell", "Komunikasi", "Email atau nomor telepon dapat digunakan untuk konfirmasi tiket, informasi jadwal, dan bantuan pelanggan."]
+    ],
+    actions: [
+      { text: "Hubungi Support", icon: "ti ti-mail", type: "mail", target: "mailto:support@nusabus.id" }
+    ]
+  },
+  caraPesan: {
+    label: "Bantuan NusaBus",
+    title: "Cara Pesan Tiket",
+    subtitle: "Ikuti langkah berikut untuk memesan tiket shuttle NusaBus.",
+    items: [
+      ["ti ti-circle-number-1", "Pilih Rute", "Tentukan kota keberangkatan, kota tujuan, tanggal pergi, dan jumlah penumpang."],
+      ["ti ti-circle-number-2", "Cari Jadwal", "Klik tombol Cari Jadwal untuk melihat pilihan perjalanan yang tersedia."],
+      ["ti ti-circle-number-3", "Konfirmasi Tiket", "Setelah jadwal dipilih dan pembayaran berhasil, kode booking dapat digunakan untuk cek tiket."]
+    ],
+    actions: [
+      { text: "Mulai Pesan", icon: "ti ti-ticket", type: "scroll", target: "search-section" }
+    ]
+  },
+  refund: {
+    label: "Bantuan NusaBus",
+    title: "Kebijakan Refund",
+    subtitle: "Informasi pengajuan refund atau pembatalan tiket.",
+    items: [
+      ["ti ti-clock-cancel", "Batas Pengajuan", "Refund dapat diajukan maksimal 6 jam sebelum jadwal keberangkatan."],
+      ["ti ti-receipt-refund", "Biaya Pembatalan", "Dana yang dikembalikan dapat dikenakan biaya administrasi sesuai ketentuan layanan."],
+      ["ti ti-message-circle", "Proses Bantuan", "Pengajuan refund diproses melalui admin dengan menyertakan kode booking dan data penumpang."]
+    ],
+    actions: [
+      { text: "Ajukan Refund", icon: "ti ti-mail", type: "mail", target: "mailto:support@nusabus.id?subject=Pengajuan%20Refund%20Tiket%20NusaBus" }
+    ]
+  },
+  hubungi: {
+    label: "Bantuan NusaBus",
+    title: "Hubungi Kami",
+    subtitle: "Tim NusaBus siap membantu pertanyaan tiket, jadwal, paket, dan layanan pelanggan.",
+    items: [
+      ["ti ti-mail", "Email", "support@nusabus.id"],
+      ["ti ti-phone", "Telepon", "022 3029 6767"],
+      ["ti ti-map-pin", "Alamat", "Jl. Dagoan No. 12, Bandung, Jawa Barat 41111"]
+    ],
+    actions: [
+      { text: "Kirim Email", icon: "ti ti-mail", type: "mail", target: "mailto:support@nusabus.id" },
+      { text: "Telepon", icon: "ti ti-phone", type: "phone", target: "tel:02230296767" }
+    ]
+  },
+  faq: {
+    label: "Bantuan NusaBus",
+    title: "FAQ",
+    subtitle: "Pertanyaan yang sering diajukan oleh pengguna NusaBus.",
+    items: [
+      ["ti ti-help", "Apakah tiket bisa dicek ulang?", "Bisa. Gunakan tombol Cek Tiket di navbar lalu masukkan kode booking."],
+      ["ti ti-help", "Apakah bisa kirim paket?", "Bisa. Gunakan menu Paket untuk cek tarif dan lacak paket."],
+      ["ti ti-help", "Kapan harus datang ke pool?", "Disarankan datang minimal 30 menit sebelum keberangkatan agar proses check-in lebih aman."]
+    ],
+    actions: [
+      { text: "Cek Tiket", icon: "ti ti-ticket", type: "function", target: "openCekTiket" }
+    ]
+  }
+};
+
+function openFooterInfo(event, key){
+  if(event){
+    event.preventDefault();
+  }
+
+  const info = dataFooterInfo[key];
+  if(!info){
+    return;
+  }
+
+  document.getElementById("footerInfoLabel").innerHTML = info.label;
+  document.getElementById("footerInfoTitle").innerHTML = info.title;
+  document.getElementById("footerInfoSubtitle").innerHTML = info.subtitle;
+
+  const content = document.getElementById("footerInfoContent");
+  content.innerHTML = "";
+
+  info.items.forEach(function(item){
+    content.innerHTML += `
+      <div class="footer-info-item">
+        <i class="${item[0]}"></i>
+        <div>
+          <h4>${item[1]}</h4>
+          <p>${item[2]}</p>
+        </div>
+      </div>
+    `;
+  });
+
+  const action = document.getElementById("footerInfoAction");
+  action.innerHTML = "";
+
+  info.actions.forEach(function(btn){
+    if(btn.type === "scroll"){
+      action.innerHTML += `
+        <button onclick="closeFooterInfo(); document.getElementById('${btn.target}').scrollIntoView({behavior:'smooth'});">
+          <i class="${btn.icon}"></i> ${btn.text}
+        </button>
+      `;
+    } else if(btn.type === "mail" || btn.type === "phone"){
+      action.innerHTML += `
+        <a href="${btn.target}">
+          <i class="${btn.icon}"></i> ${btn.text}
+        </a>
+      `;
+    } else if(btn.type === "function"){
+      action.innerHTML += `
+        <button onclick="closeFooterInfo(); ${btn.target}();">
+          <i class="${btn.icon}"></i> ${btn.text}
+        </button>
+      `;
+    }
+  });
+
+  document.getElementById("footerInfoModal").classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeFooterInfo(){
+  document.getElementById("footerInfoModal").classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function closeFooterInfoArea(event){
+  if(event.target.id === "footerInfoModal"){
+    closeFooterInfo();
+  }
+}
+
+
+// ---- Cari Jadwal Shuttle ----
+function cariJadwal(){
+  const asal = document.getElementById("kota-asal").value;
+  const tujuan = document.getElementById("kota-tujuan").value;
+  const tanggalPergi = document.getElementById("tgl-pergi").value;
+  const tanggalKembali = document.getElementById("tgl-kembali").value;
+  const penumpang = document.getElementById("jumlah-penumpang") ? document.getElementById("jumlah-penumpang").value : "1 Penumpang";
+  const isPulangPergi = document.querySelector(".trip-tab.active").textContent.trim() === "Pulang Pergi";
+
+  const jadwalModal = document.getElementById("jadwalModal");
+  const jadwalSubtitle = document.getElementById("jadwalSubtitle");
+  const jadwalList = document.getElementById("jadwalList");
+  if(!asal || !tujuan || !tanggalPergi){
+    jadwalSubtitle.innerHTML = "Data perjalanan belum lengkap.";
+    jadwalList.innerHTML = `
+      <div class="jadwal-item">
+        <div>
+          <div class="jadwal-route">Mohon lengkapi data perjalanan</div>
+          <div class="jadwal-info">
+            <span><i class="ti ti-alert-circle"></i> Pilih kota asal, kota tujuan, dan tanggal pergi terlebih dahulu.</span>
+          </div>
+        </div>
+      </div>
+    `;
+    jadwalModal.classList.add("active");
+    document.body.style.overflow = "hidden";
+    return;
+  }
+
+  if(asal === tujuan){
+    jadwalSubtitle.innerHTML = "Rute tidak valid.";
+    jadwalList.innerHTML = `
+      <div class="jadwal-item">
+        <div>
+          <div class="jadwal-route">Kota asal dan tujuan tidak boleh sama</div>
+          <div class="jadwal-info">
+            <span><i class="ti ti-alert-circle"></i> Silakan pilih kota tujuan yang berbeda.</span>
+          </div>
+        </div>
+      </div>
+    `;
+    jadwalModal.classList.add("active");
+    document.body.style.overflow = "hidden";
+    return;
+  }
+
+  if(isPulangPergi && !tanggalKembali){
+    jadwalSubtitle.innerHTML = "Tanggal kembali belum dipilih.";
+    jadwalList.innerHTML = `
+      <div class="jadwal-item">
+        <div>
+          <div class="jadwal-route">Mohon pilih tanggal kembali</div>
+          <div class="jadwal-info">
+            <span><i class="ti ti-alert-circle"></i> Untuk pulang pergi, tanggal kembali wajib diisi.</span>
+          </div>
+        </div>
+      </div>
+    `;
+    jadwalModal.classList.add("active");
+    document.body.style.overflow = "hidden";
+    return;
+  }
+
+  const hargaDasarRute = {
+    "Jakarta-Bandung": 90000,
+    "Jakarta-Bogor": 75000,
+    "Jakarta-Karawang": 80000,
+    "Bandung-Jakarta": 90000,
+    "Bandung-Bogor": 95000,
+    "Bandung-Karawang": 85000,
+    "Bogor-Jakarta": 75000,
+    "Bogor-Bandung": 95000,
+    "Bogor-Karawang": 85000,
+    "Karawang-Jakarta": 80000,
+    "Karawang-Bandung": 85000,
+    "Karawang-Bogor": 85000
+  };
+
+  const dataJadwal = [
+    {
+      jam: "07.00 WIB",
+      durasi: "3 jam 15 menit",
+      armada: "Executive Shuttle",
+      kursi: "8 kursi tersedia",
+      tambahan: 0
+    },
+    {
+      jam: "10.30 WIB",
+      durasi: "3 jam 30 menit",
+      armada: "Regular Shuttle",
+      kursi: "12 kursi tersedia",
+      tambahan: 5000
+    },
+    {
+      jam: "14.00 WIB",
+      durasi: "3 jam 20 menit",
+      armada: "Executive Shuttle",
+      kursi: "6 kursi tersedia",
+      tambahan: 15000
+    },
+    {
+      jam: "18.30 WIB",
+      durasi: "3 jam 45 menit",
+      armada: "Premium Shuttle",
+      kursi: "4 kursi tersedia",
+      tambahan: 25000
+    }
+  ];
+
+  const keyRute = asal + "-" + tujuan;
+  const hargaDasar = hargaDasarRute[keyRute] || 75000;
+
+  jadwalSubtitle.innerHTML = isPulangPergi
+    ? `${asal} → ${tujuan} • Pergi ${formatTanggal(tanggalPergi)} • Kembali ${formatTanggal(tanggalKembali)} • ${penumpang}`
+    : `${asal} → ${tujuan} • ${formatTanggal(tanggalPergi)} • ${penumpang}`;
+
+  jadwalList.innerHTML = "";
+
+  dataJadwal.forEach(function(jadwal){
+    const harga = hargaDasar + jadwal.tambahan;
+
+    jadwalList.innerHTML += `
+      <div class="jadwal-item">
+        <div>
+          <div class="jadwal-route">${asal} → ${tujuan}</div>
+          <div class="jadwal-info">
+            <span><i class="ti ti-clock"></i> ${jadwal.jam}</span>
+            <span><i class="ti ti-hourglass"></i> ${jadwal.durasi}</span>
+            <span><i class="ti ti-bus"></i> ${jadwal.armada}</span>
+            <span><i class="ti ti-armchair"></i> ${jadwal.kursi}</span>
+          </div>
+        </div>
+
+        <div class="jadwal-price">
+          <strong>Rp ${harga.toLocaleString("id-ID")}</strong>
+          <button class="btn-pilih-jadwal" onclick="pilihJadwal('${asal}', '${tujuan}', '${jadwal.jam}', ${harga})">
+            Pilih
+          </button>
+        </div>
+      </div>
+    `;
+  });
+
+  jadwalModal.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeJadwal(){
+  document.getElementById("jadwalModal").classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function closeJadwalArea(event){
+  if(event.target.id === "jadwalModal"){
+    closeJadwal();
+  }
+}
+
+function formatTanggal(tanggal){
+  const opsi = {
+    day: "2-digit",
+    month: "long",
+    year: "numeric"
+  };
+
+  return new Date(tanggal).toLocaleDateString("id-ID", opsi);
+}
+
+function pilihJadwal(asal, tujuan, jam, harga){
+  alert(
+    "Jadwal dipilih:\n" +
+    asal + " → " + tujuan + "\n" +
+    "Jam: " + jam + "\n" +
+    "Harga: Rp " + harga.toLocaleString("id-ID")
+  );
+}
+
 </script>
 </body>
 </html>
