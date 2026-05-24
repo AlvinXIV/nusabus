@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NusaBus — Shuttle Bus Antar Kota</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+/* ==================== RESET & VARIABEL WARNA ==================== */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --hijau:#1B4332;
+  --hijau-mid:#2D6A4F;
+  --hijau-terang:#52B788;
+  --kuning:#F9C74F;
+  --abu:#F4F6F4;
+  --teks:#1A1A1A;
+  --teks-mid:#4A5568;
+  --teks-muted:#8A9BAD;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#fff;color:var(--teks);overflow-x:hidden}
+
+/* ==================== CSS PROMO INLINE ==================== */
+.promo-inline{max-width:760px;margin:1rem auto 0;padding:0 1.5rem}
+.promo-inline-inner{background:linear-gradient(135deg,var(--hijau),var(--hijau-mid));border-radius:14px;padding:1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.promo-inline-left{display:flex;align-items:center;gap:12px;color:white}
+.promo-inline-left i{font-size:1.6rem;color:var(--kuning);flex-shrink:0}
+.promo-inline-title{font-size:0.92rem;font-weight:700;color:white;margin-bottom:2px}
+.promo-inline-sub{font-size:0.76rem;color:rgba(255,255,255,0.6)}
+.promo-inline-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.promo-inline-code{background:var(--kuning);color:var(--hijau);font-size:0.78rem;font-weight:800;padding:0.3rem 0.9rem;border-radius:50px;letter-spacing:0.05em;white-space:nowrap}
+.promo-inline-btn{background:white;color:var(--hijau);border:none;padding:0.45rem 1.1rem;border-radius:7px;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;white-space:nowrap}
+.promo-inline-btn:hover{opacity:0.85}
+@media(max-width:540px){.promo-inline{padding:0 1rem}.promo-inline-inner{flex-direction:column;align-items:flex-start}}
+
+/* ==================== CSS DROPDOWN NAVBAR ==================== */
+.nav-menu li {
+  position: relative;
+  list-style: none; 
+}
+.nav-menu li .dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 12px;
+  padding: 0.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  min-width: 180px;
+  z-index: 200;
+  border: 1px solid rgba(0,0,0,0.06);
+  list-style: none; 
+}
+.nav-menu li .dropdown li {
+  list-style: none; 
+}
+.nav-menu li:hover .dropdown {
+  display: block;
+}
+
+.nav-menu li .dropdown::after {
+  content: '';
+  position: absolute;
+  top: -15px; 
+  left: 0;
+  width: 100%;
+  height: 15px;
+  background: transparent;
+}
+.nav-menu li .dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid white;
+}
+.nav-menu .dropdown a {
+  display: flex;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  color: var(--teks); 
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.nav-menu .dropdown a:hover {
+  background: #F0FAF5;
+  color: var(--hijau);
+}
+.has-dropdown > a {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.has-dropdown > a::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid rgba(255,255,255,0.7);
+  transition: transform 0.2s;
+}
+.has-dropdown:hover > a::after {
+  transform: rotate(180deg);
+}
+
+/* ==================== CSS NAVBAR ==================== */
+nav{
+  background:rgba(15,36,25,0.96);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  padding:0 2rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  height:64px;
+  position:sticky;
+  top:0;
+  z-index:100;
+  transition:all 0.3s ease;
+  border-bottom:1px solid rgba(249,199,79,0.22);
+  box-shadow:0 8px 28px rgba(0,0,0,0.28);
+}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:34px;height:34px;background:var(--kuning);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--hijau);font-size:1.1rem}
+.logo-text{color:white;font-size:1.15rem;font-weight:700;letter-spacing:-0.3px}
+.logo-text span{color:var(--kuning)}
+.nav-menu{display:flex;align-items:center;gap:1.8rem;list-style:none}
+.nav-menu a{color:rgba(255,255,255,0.72);text-decoration:none;font-size:0.875rem;font-weight:500;transition:color 0.2s}
+.nav-menu a:hover{color:white}
+.nav-right{display:flex;align-items:center;gap:0.75rem}
+.btn-outline-white{background:transparent;color:white;border:1.5px solid rgba(255,255,255,0.35);padding:0.45rem 1.2rem;border-radius:7px;font-size:0.82rem;cursor:pointer;font-family:inherit;transition:all 0.2s}
+.btn-outline-white:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.6)}
+.btn-kuning{background:var(--kuning);color:var(--hijau);border:none;padding:0.48rem 1.2rem;border-radius:7px;font-size:0.82rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.2s}
+.btn-kuning:hover{background:#f0bb3a}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{width:23px;height:2px;background:white;border-radius:2px}
+
+/* ==================== CSS HERO / BANNER UTAMA ==================== */
+.hero{
+  background:
+    linear-gradient(90deg, rgba(15,36,25,0.98) 0%, rgba(27,67,50,0.92) 46%, rgba(27,67,50,0.62) 100%),
+    url("image/nusabus.png") center right/cover no-repeat;
+  padding:3.5rem 2rem 6rem;
+  position:relative;
+  overflow:hidden;
+}
+.hero-dots{position:absolute;inset:0;opacity:0.05;background-image:radial-gradient(circle,white 1.5px,transparent 1.5px);background-size:30px 30px}
+.hero-circle{position:absolute;right:-120px;bottom:-120px;width:420px;height:420px;border-radius:50%;border:60px solid rgba(255,255,255,0.03)}
+.hero-inner{position:relative;z-index:1;max-width:720px;margin:0 auto;text-align:center}
+.hero-tag{display:inline-flex;align-items:center;gap:7px;background:rgba(249,199,79,0.14);color:var(--kuning);font-size:0.74rem;font-weight:700;padding:0.32rem 0.9rem;border-radius:50px;border:1px solid rgba(249,199,79,0.28);margin-bottom:1.3rem;letter-spacing:0.05em;text-transform:uppercase}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;color:white;line-height:1.12;margin-bottom:0.9rem}
+.hero h1 span{color:var(--kuning)}
+.hero p{color:rgba(255,255,255,0.58);font-size:0.97rem;line-height:1.75;max-width:500px;margin:0 auto}
+
+/* ==================== CSS FORM PENCARIAN ==================== */
+.search-wrap{max-width:760px;margin:-3rem auto 0;padding:0 1.5rem;position:relative;z-index:10}
+.search-card{background:white;border-radius:18px;padding:1.6rem;box-shadow:0 12px 40px rgba(0,0,0,0.13);border:1px solid rgba(0,0,0,0.05)}
+.trip-tabs{display:flex;gap:6px;margin-bottom:1.4rem;background:var(--abu);border-radius:9px;padding:4px}
+.trip-tab{flex:1;padding:0.52rem;border:none;background:transparent;border-radius:7px;font-family:inherit;font-size:0.83rem;font-weight:500;color:var(--teks-mid);cursor:pointer;transition:all 0.2s}
+.trip-tab.active{background:white;color:var(--hijau);font-weight:700;box-shadow:0 1px 6px rgba(0,0,0,0.09)}
+.swap-row{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end;margin-bottom:12px}
+.swap-center{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:4px}
+.swap-btn{width:40px;height:40px;border-radius:50%;background:white;border:2px solid var(--hijau-terang);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--hijau);font-size:1rem;transition:all 0.25s;flex-shrink:0}
+.swap-btn:hover{background:var(--hijau);color:white;border-color:var(--hijau);transform:rotate(180deg)}
+.extra-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:0.69rem;font-weight:700;color:var(--teks-muted);text-transform:uppercase;letter-spacing:0.07em}
+.field select,.field input{border:1.5px solid #E2E8F0;border-radius:9px;padding:0.65rem 0.8rem;font-family:inherit;font-size:0.9rem;color:var(--teks);background:white;outline:none;appearance:none;-webkit-appearance:none;transition:border-color 0.2s;width:100%}
+.field select:focus,.field input:focus{border-color:var(--hijau-terang);box-shadow:0 0 0 3px rgba(82,183,136,0.12)}
+.search-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem}
+.search-note{font-size:0.79rem;color:var(--teks-muted);display:flex;align-items:center;gap:6px}
+.btn-search{background:var(--hijau);color:white;border:none;padding:0.75rem 2.2rem;border-radius:9px;font-family:inherit;font-size:0.92rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.2s}
+.btn-search:hover{background:var(--hijau-mid)}
+
+/* ==================== CSS STATISTIK ==================== */
+.stats-bar{background:var(--abu);padding:1.6rem 2rem;margin-top:3rem}
+.stats-inner{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;text-align:center}
+.stat-item .num{font-size:1.5rem;font-weight:800;color:var(--hijau);line-height:1}
+.stat-item .lbl{font-size:0.74rem;color:var(--teks-muted);margin-top:4px}
+
+/* ==================== CSS OUTLET / KOTA ==================== */
+.outlet-section{padding:3.4rem 1.5rem;max-width:1120px;margin:0 auto}
+.outlet-head{text-align:center;margin-bottom:2.2rem}
+.sec-label{font-size:0.71rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--hijau-terang);margin-bottom:0.55rem}
+.sec-title{font-size:clamp(1.4rem,3vw,2rem);font-weight:800;color:var(--teks);line-height:1.2}
+.sec-title span{color:var(--hijau-terang)}
+.outlet-layout{display:grid;grid-template-columns:390px 1fr;gap:1.5rem;align-items:stretch}
+.city-panel{background:white;border:1.5px solid #E5EEE8;border-radius:18px;padding:1rem;box-shadow:0 14px 40px rgba(27,67,50,0.08);height:520px;overflow-y:auto}
+.city-panel::-webkit-scrollbar{width:8px}
+.city-panel::-webkit-scrollbar-thumb{background:#B7C9BD;border-radius:20px}
+.city-panel::-webkit-scrollbar-track{background:#F4F6F4;border-radius:20px}
+.city-card{background:#F8FBF9;border:1.5px solid transparent;border-radius:16px;padding:1rem;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:1rem;margin-bottom:0.9rem;transition:all 0.2s;cursor:pointer}
+.city-card:hover,.city-card.active{background:#F0FAF5;border-color:var(--hijau-terang);transform:translateY(-2px)}
+.city-photo{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#DFF3E9,#B7E4C7);border:2px solid var(--hijau-terang);position:relative;display:flex;align-items:center;justify-content:center;color:var(--hijau);font-size:1.5rem;flex-shrink:0}
+.city-img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+  display:block;
+}
+.city-rank{position:absolute;left:-2px;bottom:2px;width:25px;height:25px;border-radius:50%;background:var(--kuning);color:var(--hijau);font-size:0.78rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:3px solid white}
+.city-info h3{font-size:1.05rem;font-weight:800;color:var(--teks);margin-bottom:0.25rem}
+.city-info p{font-size:0.82rem;color:var(--teks-muted)}
+.city-go{width:42px;height:42px;border:none;border-radius:50%;background:var(--hijau);color:white;font-size:1.05rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s}
+.city-card:hover .city-go{background:var(--kuning);color:var(--hijau);transform:translateX(3px)}
+.map-card{background:white;border:1.5px solid #E5EEE8;border-radius:18px;padding:1.3rem;box-shadow:0 14px 40px rgba(27,67,50,0.08);display:flex;flex-direction:column;justify-content:space-between}
+.map-box{background:#F8FBF9;border-radius:16px;min-height:340px;display:flex;align-items:center;justify-content:center;padding:1rem;overflow:hidden;flex:1}
+.map-img{width:100%;max-width:650px;height:auto;object-fit:contain;border-radius:8px}
+.map-placeholder{text-align:center;color:var(--teks-muted)}
+.map-placeholder i{font-size:3rem;color:#C8DDD1;margin-bottom:0.75rem;display:block}
+.map-placeholder p{font-size:0.82rem}
+.help-box{margin-top:1rem;background:#F4F6F4;border-radius:16px;padding:1.05rem 1.15rem}
+.help-box h3{font-size:1rem;font-weight:800;margin-bottom:0.7rem;color:var(--teks)}
+.help-list{display:grid;grid-template-columns:1.3fr 0.8fr 1fr;gap:0.9rem}
+.help-item{display:flex;gap:0.55rem;align-items:flex-start;font-size:0.82rem;color:var(--teks-muted);line-height:1.5}
+.help-item i{font-size:1.05rem;color:var(--hijau-mid);margin-top:2px}
+
+/* ==================== CSS KEUNGGULAN ==================== */
+.keung-section{padding:3.5rem 2rem;background:#fff}
+.keung-inner{max-width:1100px;margin:0 auto}
+.keung-header{margin-bottom:2.5rem}
+.keung-grid-img{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem}
+.keung-img-card{display:flex;flex-direction:column;gap:1rem}
+.keung-img-wrap{width:100%;aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:#E8F0E8;position:relative}
+.keung-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.3s}
+.keung-img-card:hover .keung-img-wrap img{transform:scale(1.04)}
+.keung-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;color:#9BAAA0;background:linear-gradient(135deg,#E8F5EE,#D4EAE0)}
+.keung-img-placeholder i{font-size:2.4rem;opacity:0.6}
+.keung-img-placeholder span{font-size:0.72rem;opacity:0.6;text-align:center;padding:0 1rem}
+.keung-img-body h4{font-size:1.05rem;font-weight:800;color:var(--teks);margin-bottom:0.35rem}
+.keung-img-body p{font-size:0.86rem;color:var(--teks-muted);line-height:1.65}
+@media(max-width:640px){.keung-grid-img{grid-template-columns:1fr}}
+@media(max-width:540px){.keung-section{padding:2.5rem 1rem}}
+
+/* ==================== CSS PROMO TAMBAHAN ==================== */
+.promo-strip{background:var(--hijau);padding:2.2rem 1.5rem}
+.promo-inner{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1.2rem;flex-wrap:wrap}
+.promo-text h3{color:white;font-size:1.1rem;font-weight:800;margin-bottom:0.2rem}
+.promo-text p{color:rgba(255,255,255,0.58);font-size:0.82rem}
+.promo-badge{background:var(--kuning);color:var(--hijau);font-size:0.8rem;font-weight:800;padding:0.32rem 0.9rem;border-radius:50px;white-space:nowrap;letter-spacing:0.04em}
+
+
+
+/* ==================== CSS ARTIKEL ==================== */
+.artikel-section{
+  padding:4rem 1.5rem;
+  background:#F8FBF9;
+  position:relative;
+  overflow:hidden;
+}
+.artikel-section::before,
+.artikel-section::after{
+  content:"";
+  position:absolute;
+  width:520px;
+  height:520px;
+  border:42px solid rgba(27,67,50,0.035);
+  border-radius:50%;
+  z-index:0;
+}
+.artikel-section::before{top:-300px;left:-220px}
+.artikel-section::after{bottom:-330px;right:-220px}
+.artikel-inner{
+  max-width:1100px;
+  margin:0 auto;
+  background:white;
+  border:1.5px solid #E5EEE8;
+  border-radius:18px;
+  padding:2.4rem;
+  position:relative;
+  z-index:1;
+  box-shadow:0 14px 40px rgba(27,67,50,0.07);
+}
+.artikel-header{text-align:center;max-width:760px;margin:0 auto 2rem}
+.artikel-header .sec-label{margin-bottom:0.55rem}
+.artikel-header .sec-title{margin-bottom:0.7rem}
+.artikel-subtitle{color:var(--teks-muted);font-size:0.95rem;line-height:1.8}
+.artikel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:2rem}
+.artikel-card{
+  border:1.5px solid #E5EEE8;
+  border-radius:16px;
+  padding:1.45rem;
+  background:#fff;
+  transition:all 0.25s ease;
+}
+.artikel-card:hover{transform:translateY(-4px);box-shadow:0 10px 28px rgba(27,67,50,0.1);border-color:var(--hijau-terang)}
+.artikel-icon{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  background:#F0FAF5;
+  color:var(--hijau);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.35rem;
+  margin-bottom:1rem;
+}
+.artikel-card h3{font-size:1rem;font-weight:800;color:var(--teks);line-height:1.5;margin-bottom:0.7rem}
+.artikel-card p{color:var(--teks-muted);font-size:0.86rem;line-height:1.7;margin-bottom:1rem}
+.artikel-meta{display:flex;align-items:center;gap:6px;color:var(--teks-muted);font-size:0.76rem;border-top:1px solid #EEF3EF;padding-top:0.85rem}
+.artikel-meta i{color:var(--hijau-terang);font-size:0.9rem}
+.artikel-action{margin-top:2rem;text-align:center}
+.btn-artikel{
+  background:var(--hijau);
+  color:white;
+  border:none;
+  padding:0.75rem 1.7rem;
+  border-radius:50px;
+  font-family:inherit;
+  font-size:0.88rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all 0.2s ease;
+}
+.btn-artikel:hover{background:var(--hijau-mid);transform:translateY(-2px)}
+@media(max-width:900px){.artikel-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){
+  .artikel-section{padding:3rem 1rem}
+  .artikel-inner{padding:1.5rem}
+  .artikel-grid{grid-template-columns:1fr}
+}
+
+/* ==================== CSS TESTIMONI ==================== */
+.testi-section{padding:3.5rem 2rem;background:#F8FBF9}
+.testi-inner{max-width:1100px;margin:0 auto}
+.testi-header{margin-bottom:2rem}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.testi-card{background:white;border-radius:16px;padding:1.5rem;border:1.5px solid #E5EEE8;transition:box-shadow 0.2s,transform 0.2s}
+.testi-card:hover{box-shadow:0 8px 28px rgba(27,67,50,0.1);transform:translateY(-3px)}
+.testi-quote{font-size:2.8rem;color:var(--hijau-terang);line-height:0.8;margin-bottom:0.75rem;opacity:0.35;font-family:Georgia,serif}
+.testi-text{font-size:0.88rem;color:var(--teks-mid);line-height:1.75;margin-bottom:1rem;font-style:italic}
+.testi-stars{color:#F9C74F;font-size:0.9rem;margin-bottom:1rem;letter-spacing:1px}
+.testi-author{display:flex;align-items:center;gap:12px;border-top:1px solid #EEF3EF;padding-top:1rem}
+.testi-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:700;color:white;flex-shrink:0}
+.testi-name{font-size:0.88rem;font-weight:700;color:var(--teks)}
+.testi-route{font-size:0.74rem;color:var(--teks-muted);margin-top:2px;display:flex;align-items:center;gap:4px}
+@media(max-width:768px){.testi-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.testi-grid{grid-template-columns:1fr}.testi-section{padding:2.5rem 1rem}}
+
+/* ==================== CSS FOOTER ==================== */
+footer{background:#0F2419 !important;border-top:none;padding:3rem 2rem 1.5rem}
+.footer-inner{max-width:1100px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:220px 1fr;gap:3rem;margin-bottom:2rem}
+.footer-brand .footer-logo{font-size:1.4rem;font-weight:800;color:white;margin-bottom:0.5rem}
+.footer-brand .footer-logo span{color:var(--kuning)}
+.footer-brand .footer-desc{font-size:0.78rem;color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:0.6rem}
+.footer-brand .footer-privacy{font-size:0.75rem;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:5px;margin-bottom:0}
+.footer-brand .footer-privacy i{font-size:0.85rem;color:var(--hijau-terang)}
+.footer-brand .footer-privacy a{color:var(--hijau-terang);text-decoration:underline;text-underline-offset:2px;transition:color 0.2s}
+.footer-brand .footer-privacy a:hover{color:white}
+.footer-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+.footer-col h5{font-size:0.95rem;font-weight:700;color:white;margin-bottom:0.6rem;padding-bottom:0.5rem;border-bottom:2px solid var(--hijau-terang);display:inline-block}
+.footer-col ul{list-style:none;padding:0;margin:0.8rem 0 0}
+.footer-col ul li{margin-bottom:0.6rem}
+.footer-col ul li a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.84rem;transition:color 0.2s}
+.footer-col ul li a:hover{color:white}
+.footer-socials-col h5{font-size:0.95rem;font-weight:700;color:white;margin-bottom:0.6rem;padding-bottom:0.5rem;border-bottom:2px solid var(--hijau-terang);display:inline-block}
+.footer-socials-list{margin-top:0.8rem;display:flex;flex-direction:column;gap:0.55rem}
+.footer-social-item{display:flex;align-items:center;gap:8px;text-decoration:none;color:rgba(255,255,255,0.5);font-size:0.84rem;transition:color 0.2s}
+.footer-social-item:hover{color:white}
+.footer-social-item i{font-size:1.05rem;width:20px;text-align:center}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.08);padding-top:1.2rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+.footer-bottom p{font-size:0.74rem;color:rgba(255,255,255,0.28)}
+.footer-payment{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pay-badge{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.4);font-size:0.68rem;font-weight:700;padding:0.25rem 0.55rem;border-radius:5px;letter-spacing:0.03em;border:none}
+@media(max-width:900px){.footer-top{grid-template-columns:1fr}.footer-cols{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:540px){.footer-cols{grid-template-columns:1fr}.footer-top{gap:2rem}footer{padding:2.5rem 1rem 1.5rem}}
+
+/* ==================== RESPONSIVE / TAMPILAN MOBILE ==================== */
+@media(max-width:900px){
+  .outlet-layout{grid-template-columns:1fr}
+  .city-panel{height:auto;max-height:480px}
+  .help-list{grid-template-columns:1fr}
+  .keung-grid-img{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+  .hero{
+    background:
+      linear-gradient(rgba(15,36,25,0.96), rgba(27,67,50,0.91)),
+      url("image/nusabus.png") center/cover no-repeat;
+  }
+
+  /* Navbar Mobile Melar ke bawah */
+  nav {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 64px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  
+  .nav-menu, .nav-right {
+    display: none;
+    width: 100%;
+  }
+  .hamburger {
+    display: flex;
+  }
+
+  /* Saat Menu HP Dibuka */
+  nav.menu-open .nav-menu {
+    display: flex;
+    flex-direction: column;
+    order: 3;
+    margin-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    align-items: flex-start;
+  }
+  nav.menu-open .nav-right {
+    display: flex;
+    flex-direction: column;
+    order: 4;
+    gap: 10px;
+    padding-bottom: 0.5rem;
+    align-items: flex-start;
+  }
+
+  /* Dropdown Mobile Setup */
+  .nav-menu li .dropdown {
+    position: static;
+    transform: none;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding-left: 1rem;
+    margin-top: 0.5rem;
+  }
+  .nav-menu .dropdown a {
+    color: rgba(255,255,255,0.72);
+  }
+  .nav-menu .dropdown a:hover {
+    color: white;
+    background: rgba(255,255,255,0.05);
+  }
+  .nav-menu li .dropdown::before,
+  .nav-menu li .dropdown::after {
+    display: none;
+  }
+
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:540px){
+  .promo-inline{padding:0 1rem}
+  .promo-inline-inner{flex-direction:column;align-items:flex-start}
+  .keung-grid-img{grid-template-columns:1fr}
+  .keung-section{padding:2.5rem 1rem}
+}
+@media(max-width:480px){
+  nav{padding:0 1rem}
+  .hero{padding:2.5rem 1rem 5.5rem}
+  .search-wrap{padding:0 1rem}
+  .swap-row{grid-template-columns:1fr}
+  .swap-center{display:none}
+  .extra-row{grid-template-columns:1fr}
+  .search-footer{flex-direction:column}
+  .btn-search{width:100%;justify-content:center}
+  .footer-grid{grid-template-columns:1fr}
+  .city-card{grid-template-columns:auto 1fr}
+  .city-go{display:none}
+  .city-photo{width:58px;height:58px}
+  .outlet-section{padding:2.6rem 1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== NAVBAR ==================== -->
+<nav>
+  <a class="logo" href="#">
+    <div class="logo-icon"><i class="ti ti-bus"></i></div>
+    <span class="logo-text">Nusa<span>Bus</span></span>
+  </a>
+  <ul class="nav-menu">
+    <li><a href="#">Shuttle</a></li>
+    <li class="has-dropdown">
+      <a href="#">Paket</a>
+      <ul class="dropdown">
+        <li><a href="#"><i class="ti ti-calculator" style="margin-right:8px;color:#52B788"></i>Cek Tarif Paket</a></li>
+        <li><a href="#"><i class="ti ti-map-route" style="margin-right:8px;color:#52B788"></i>Lacak Paket</a></li>
+        
+      </ul>
+    </li>
+    <li><a href="#">Rute</a></li>
+    <li><a href="#">Tentang Kami</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-outline-white">Cek Tiket</button>
+    <button class="btn-kuning">Masuk</button>
+  </div>
+  <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+
+<!-- ==================== HERO / BANNER UTAMA ==================== -->
+<section class="hero">
+  <div class="hero-dots"></div>
+  <div class="hero-circle"></div>
+  <div class="hero-inner">
+    <div class="hero-tag"><i class="ti ti-shield-check" style="font-size:0.85rem"></i> Armada ber-AC & tepat waktu</div>
+    <h1>Perjalanan Antar Kota<br>yang <span>Nyaman & Hemat</span></h1>
+    <p>Pesan tiket shuttle bus online — mudah, cepat, dan langsung terkonfirmasi. Tersedia berbagai rute di pulau jawa</p>
+  </div>
+</section>
+
+
+<!-- ==================== FORM PENCARIAN TIKET ==================== -->
+<div class="search-wrap" id="search-section">
+  <div class="search-card">
+    <div class="trip-tabs">
+      <button class="trip-tab active" onclick="setTab(this)">Sekali Jalan</button>
+      <button class="trip-tab" onclick="setTab(this)">Pulang Pergi</button>
+    </div>
+    <div class="swap-row">
+      <div class="field">
+        <label>Keberangkatan</label>
+        <select id="kota-asal">
+          <option value="">Pilih kota asal</option>
+          <option>Jakarta</option><option>Bandung</option><option>Bogor</option><option>Karawang</option>
+        </select>
+      </div>
+      <div class="swap-center">
+        <button class="swap-btn" onclick="swapRute()" title="Tukar keberangkatan & tujuan">
+          <i class="ti ti-arrows-right-left"></i>
+        </button>
+      </div>
+      <div class="field">
+        <label>Tujuan</label>
+        <select id="kota-tujuan">
+          <option value="">Pilih kota tujuan</option>
+          <option>Jakarta</option><option>Bandung</option><option>Bogor</option><option>Karawang</option>
+        </select>
+      </div>
+    </div>
+    <div class="extra-row">
+      <div class="field">
+        <label>Tanggal Pergi</label>
+        <input type="date" id="tgl-pergi">
+      </div>
+      <div class="field">
+        <label>Penumpang</label>
+        <select>
+          <option>1 Penumpang</option><option>2 Penumpang</option><option>3 Penumpang</option>
+          <option>4 Penumpang</option><option>5+ Penumpang</option>
+        </select>
+      </div>
+    </div>
+    <div class="search-footer">
+      <span class="search-note"><i class="ti ti-tag" style="color:#52B788;font-size:0.9rem"></i> Harga mulai Rp 75.000</span>
+      <button class="btn-search"><i class="ti ti-search"></i> Cari Jadwal</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ==================== PROMO INLINE ==================== -->
+<div class="promo-inline" id="promoBar">
+  <div class="promo-inline-inner">
+    <div class="promo-inline-left">
+      <i class="ti ti-speakerphone"></i>
+      <div>
+        <div class="promo-inline-title">Promo Akhir Pekan — Diskon 20%!</div>
+        <div class="promo-inline-sub">Berlaku Jumat–Minggu. Gunakan kode saat checkout.</div>
+      </div>
+    </div>
+    <div class="promo-inline-right">
+      <span class="promo-inline-code">WEEKEND20</span>
+      <button class="promo-inline-btn">Pakai Sekarang</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ==================== STATISTIK LAYANAN ==================== -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item"><div class="num">12</div><div class="lbl">Rute Aktif</div></div>
+    <div class="stat-item"><div class="num">14</div><div class="lbl">Outlet Keberangkatan</div></div>
+    <div class="stat-item"><div class="num">96%</div><div class="lbl">Ketepatan Waktu</div></div>
+    <div class="stat-item"><div class="num">4.8★</div><div class="lbl">Rating Pengguna</div></div>
+  </div>
+</div>
+
+
+<!-- ==================== OUTLET / KOTA TERSEDIA ==================== -->
+<section class="outlet-section">
+  <div class="outlet-head">
+    <p class="sec-title">Tersebar di Berbagai Kota <span>Indonesia</span></p>
+  </div>
+  <div class="outlet-layout">
+    <div class="city-panel">
+      <div class="city-card ">
+        <div class="city-photo">
+          <img src="image/jakarta.jpg" alt="Jakarta" class="city-img">
+          <span class="city-rank">1</span>
+        </div>
+        <div class="city-info"><h3>Jakarta</h3><p>5 Outlet tersedia</p></div>
+        <button class="city-go"><i class="ti ti-chevron-right"></i></button>
+      </div>
+      <div class="city-card">
+        <div class="city-photo">
+        <img src="image/bandung.jpg" alt="Bandung" class="city-img">
+        <span class="city-rank">2</span>
+      </div>
+        <div class="city-info"><h3>Bandung</h3><p>4 Outlet tersedia</p></div>
+        <button class="city-go"><i class="ti ti-chevron-right"></i></button>
+      </div>
+      <div class="city-card">
+        <div class="city-photo">
+          <img src="image/bogor.jpg" alt="bogor" class="city-img">
+          <span class="city-rank">3</span>
+        </div>
+        <div class="city-info"><h3>Bogor</h3><p>3 Outlet tersedia</p></div>
+        <button class="city-go"><i class="ti ti-chevron-right"></i></button>
+      </div>
+      <div class="city-card">
+        <div class="city-photo">
+          <img src="image/karawang.jpg" alt="karawang" class="city-img">
+          <span class="city-rank">4</span>
+        </div>
+        <div class="city-info"><h3>Karawang</h3><p>2 Outlet tersedia</p></div>
+        <button class="city-go"><i class="ti ti-chevron-right"></i></button>
+      </div>
+    </div>
+    <div class="map-card">
+      <div class="map-box">
+          <img src="image/peta.png" alt="Peta Rute NusaBus" class="map-img">
+        </div>
+      <div class="help-box">
+        <h3>Butuh Bantuan?</h3>
+        <div class="help-list">
+          <div class="help-item"><i class="ti ti-map-pin"></i><span>Jl. Dagoan No. 12, Bandung, Jawa Barat 41111</span></div>
+          <div class="help-item"><i class="ti ti-phone"></i><span>022 3029 6767</span></div>
+          <div class="help-item"><i class="ti ti-mail"></i><span>support@nusabus.id</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== KEUNGGULAN NUSABUS ==================== -->
+<section class="keung-section">
+  <div class="keung-inner">
+    <div class="keung-header">
+      <p class="sec-label">Kenapa NusaBus?</p>
+      <p class="sec-title">Perjalanan Lebih Tenang Bersama Kami</p>
+    </div>
+    <div class="keung-grid-img">
+      <div class="keung-img-card">
+        <div class="keung-img-wrap">
+          <img src="image/tptduduk.jpg" alt="Kursi Nyaman">
+        </div>
+        <div class="keung-img-body">
+          <h4>Kursi Nyaman</h4>
+          <p>Armada bersih dengan reclining seat dan jarak antar kaki yang lega. Pilih tempat duduk sesuai preferensi kamu.</p>
+        </div>
+      </div>
+      <div class="keung-img-card">
+        <div class="keung-img-wrap">
+          <img src="image/affordable.jpg" alt="Harga Terjangkau">
+        </div>
+        <div class="keung-img-body">
+          <h4>Affordable</h4>
+          <p>Tiket shuttle dengan harga bersaing &amp; banyak promo menarik. Tersedia berbagai pilihan jadwal keberangkatan setiap hari.</p>
+        </div>
+      </div>
+      <div class="keung-img-card">
+        <div class="keung-img-wrap">
+          <img src="image/tracking.jpeg" alt="GPS Tracking System">
+        </div>
+        <div class="keung-img-body">
+          <h4>GPS Tracking System</h4>
+          <p>Pantau posisi armada secara real-time dan ketahui estimasi waktu tiba perjalananmu kapan saja.</p>
+        </div>
+      </div>
+      <div class="keung-img-card">
+        <div class="keung-img-wrap">
+          <img src="image/dashcam.jpg" alt="Aman &amp; Bersih">
+        </div>
+        <div class="keung-img-body">
+          <h4>Aman &amp; Bersih</h4>
+          <p>Pengemudi bersertifikat, armada ber-CCTV, dan tersertifikasi standar kebersihan &amp; keselamatan nasional.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== ARTIKEL & TIPS PERJALANAN ==================== -->
+<section class="artikel-section">
+  <div class="artikel-inner">
+    <div class="artikel-header">
+      <p class="sec-label">Artikel &amp; Tips Perjalanan</p>
+      <p class="sec-title">Info Penting Sebelum Naik <span>NusaBus</span></p>
+      <p class="artikel-subtitle">
+        Temukan tips perjalanan, panduan pemesanan tiket, dan informasi rute agar perjalanan antar kota Anda lebih nyaman, aman, dan hemat.
+      </p>
+    </div>
+
+    <div class="artikel-grid">
+      <div class="artikel-card">
+        <div class="artikel-icon"><i class="ti ti-map-route"></i></div>
+        <h3>Pool NusaBus Pasteur Pindah Lokasi, Ini Lokasi Barunya</h3>
+        <p>
+         Per tanggal 20 mei pool nusabus pasteur pindah lokasi silahkan cek lokasi barunya di artikel ini
+        </p>
+        <div class="artikel-meta">
+          <i class="ti ti-calendar"></i>
+          <span>NusaBus • 24 Mei 2026</span>
+        </div>
+      </div>
+
+      <div class="artikel-card">
+        <div class="artikel-icon"><i class="ti ti-ticket"></i></div>
+        <h3>Cara Pesan Tiket NusaBus Secara Online</h3>
+        <p>
+          Mulai dari memilih kota asal, tujuan, tanggal berangkat, jumlah penumpang, hingga mendapatkan konfirmasi tiket perjalanan.
+        </p>
+        <div class="artikel-meta">
+          <i class="ti ti-calendar"></i>
+          <span>NusaBus • 23 Mei 2026</span>
+        </div>
+      </div>
+
+      <div class="artikel-card">
+        <div class="artikel-icon"><i class="ti ti-shield-check"></i></div>
+        <h3>Kenapa Keamanan Armada Itu Penting?</h3>
+        <p>
+          Ketahui pentingnya armada ber-AC, pengemudi bersertifikat, CCTV, dashcam, dan pelacakan GPS untuk kenyamanan penumpang.
+        </p>
+        <div class="artikel-meta">
+          <i class="ti ti-calendar"></i>
+          <span>NusaBus • 22 Mei 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="artikel-action">
+      <button class="btn-artikel">Lihat Semua Artikel</button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== TESTIMONI PENGGUNA ==================== -->
+<section class="testi-section">
+  <div class="testi-inner">
+    <div class="testi-header">
+      <p class="sec-label">Ulasan Pengguna</p>
+      <p class="sec-title">Apa Kata Mereka?</p>
+    </div>
+    <div class="testi-grid">
+
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">Perjalanan Jakarta–Bandung sangat nyaman! Kursinya lega, AC sejuk, dan berangkat tepat waktu. Saya pasti akan pesan lagi lewat NusaBus.</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:#1B4332">AR</div>
+          <div>
+            <div class="testi-name">Andi Ramadhan</div>
+            <div class="testi-route"><i class="ti ti-bus" style="font-size:0.75rem;color:#52B788"></i> Jakarta → Bandung</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">Harganya terjangkau banget . Pesan tiketnya gampang, langsung dapat konfirmasi. Armadanya juga bersih dan terawat.</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:#2D6A4F">SR</div>
+          <div>
+            <div class="testi-name">Siti Rahayu</div>
+            <div class="testi-route"><i class="ti ti-bus" style="font-size:0.75rem;color:#52B788"></i> Bogor → Jakarta</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <div class="testi-stars">★★★★☆</div>
+        <p class="testi-text">Fitur GPS tracking-nya sangat membantu, bisa pantau posisi bus dari HP. Keluarga di rumah jadi tenang karena bisa lihat perjalanan saya real-time.</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:#52B788">DK</div>
+          <div>
+            <div class="testi-name">Dian Kusuma</div>
+            <div class="testi-route"><i class="ti ti-bus" style="font-size:0.75rem;color:#52B788"></i> Bandung → Karawang</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+
+      <div class="footer-brand">
+        <div class="footer-logo">Nusa<span>Bus</span></div>
+        <p class="footer-desc">
+          Shuttle bus antar kota terpercaya — nyaman, aman, dan harga transparan sejak 2015.
+        </p>
+      </div>
+
+      <div class="footer-cols">
+
+        <div class="footer-col">
+          <h5>Layanan</h5>
+          <ul>
+            <li><a href="#">Shuttle Reguler</a></li>
+            <li><a href="#">Charter Armada</a></li>
+            <li><a href="#">Paket Wisata</a></li>
+            <li><a href="#">Pengiriman Barang</a></li>
+            <li><a href="#">Kebijakan Privasi</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Bantuan</h5>
+          <ul>
+            <li><a href="#">Cara Pesan</a></li>
+            <li><a href="#">Kebijakan Refund</a></li>
+            <li><a href="#">Hubungi Kami</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-socials-col">
+          <h5>Terhubung dengan Kami</h5>
+          <div class="footer-socials-list">
+            <a href="mailto:support@nusabus.id" class="footer-social-item">
+              <i class="ti ti-mail" style="color:#52B788"></i> support@nusabus.id
+            </a>
+            <a href="tel:02230296767" class="footer-social-item">
+              <i class="ti ti-phone" style="color:#52B788"></i> 022 3029 6767
+            </a>
+            <a href="https://www.instagram.com/alvinhrynto/" class="footer-social-item">
+              <i class="ti ti-brand-instagram" style="color:#E1306C"></i> @nusabus.id
+            </a>
+            <a href="https://www.tiktok.com/id-ID/" class="footer-social-item">
+              <i class="ti ti-brand-tiktok" style="color:white"></i> @nusabus
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 NusaBus.</p>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ==================== JAVASCRIPT INTERAKSI ==================== -->
+<script>
+// Mengatur tab Sekali Jalan / Pulang Pergi
+function setTab(el){
+  document.querySelectorAll('.trip-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Menukar kota keberangkatan dan tujuan
+function swapRute(){
+  const asal=document.getElementById('kota-asal');
+  const tujuan=document.getElementById('kota-tujuan');
+  const tmp=asal.value; asal.value=tujuan.value; tujuan.value=tmp;
+  const btn=document.querySelector('.swap-btn');
+  btn.style.transform='rotate(180deg)';
+  setTimeout(()=>{btn.style.transform='';},400);
+}
+
+// Set tanggal minimal hari ini pada input date
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('tgl-pergi').value = today;
+
+// Script Toggle Mobile Menu Navbar
+document.querySelector('.hamburger').addEventListener('click', function() {
+  document.querySelector('nav').classList.toggle('menu-open');
+});
+</script>
+</body>
+</html>
